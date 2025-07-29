@@ -6,10 +6,11 @@ from io import BytesIO
 
 st.set_page_config(page_title="Conversor UTM ↔️ Geográfica", layout="wide")
 
-st.markdown("""
-<h1 style='text-align: center;'>📍 Conversor de Coordenadas</h1>
-<p style='text-align: center; color: gray;'>Transforme seus dados entre latitude/longitude e UTM (Zona 24S)</p>
-"", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align: center;'>📍 Conversor de Coordenadas</h1>"
+    "<p style='text-align: center; color: gray;'>Transforme seus dados entre latitude/longitude e UTM (Zona 24S)</p>",
+    unsafe_allow_html=True
+)
 
 with st.sidebar:
     st.image("https://img.icons8.com/emoji/96/compass-emoji.png", width=64)
@@ -65,11 +66,9 @@ if uploaded_file:
         buffer.seek(0)
         return buffer
 
-    csv_bytes = converter_para_csv_bytes(df)
-
     st.download_button(
         label="📥 Baixar CSV convertido",
-        data=csv_bytes,
+        data=converter_para_csv_bytes(df),
         file_name="coordenadas_convertidas.csv",
         mime="text/csv"
     )
