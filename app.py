@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import pyproj
@@ -17,12 +16,6 @@ with st.sidebar:
     st.header("⚙️ Opções")
     modo = st.radio("Modo de Conversão:", ["📁 Arquivo CSV", "⌨️ Entrada Manual"])
     opcao = st.radio("Tipo de Conversão:", ["🌍 Geográficas → UTM", "📐 UTM → Geográficas", "🧭 GMS → Geográficas"])
-    
-opcao = st.radio("Tipo de Conversão:", [
-    "🌍 Geográficas → UTM", 
-    "📐 UTM → Geográficas", 
-    "🧭 GMS → Geográficas"
-])
 
 st.markdown("---")
 
@@ -43,9 +36,9 @@ if modo == "📁 Arquivo CSV":
 
         if opcao == "🌍 Geográficas → UTM":
             if 'latitude' in df.columns and 'longitude' in df.columns:
-                zone = int((lon + 180) / 6) + 1
-    hemisphere = "south" if lat < 0 else "north"
-                proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={{zone}} +south" if hemisphere == "south" else f"+proj=utm +zone={{zone}} +north", always_xy=True)
+                zone = int((df['longitude'].mean() + 180) / 6) + 1
+                hemisphere = "south" if df['latitude'].mean() < 0 else "north"
+                proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={zone} +south" if hemisphere == "south" else f"+proj=utm +zone={zone} +north", always_xy=True)
                 easting, northing = proj_utm.transform(df['longitude'].values, df['latitude'].values)
                 df['UTM_E'] = [round(e, 2) for e in easting]
                 df['UTM_N'] = [round(n, 2) for n in northing]
@@ -67,10 +60,10 @@ else:
         lon = st.number_input("Longitude (graus decimais)", format="%.6f")
         if st.button("Converter"):
             zone = int((lon + 180) / 6) + 1
-    hemisphere = "south" if lat < 0 else "north"
-                proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={{zone}} +south" if hemisphere == "south" else f"+proj=utm +zone={{zone}} +north", always_xy=True)
+            hemisphere = "south" if lat < 0 else "north"
+            proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={zone} +south" if hemisphere == "south" else f"+proj=utm +zone={zone} +north", always_xy=True)
             e, n = proj_utm.transform(lon, lat)
-            st.success(f"Resultado UTM — Zona {zone}/{"S" if hemisphere == "south" else "N"}:")
+            st.success(f"Resultado UTM — Zona {zone}/{'S' if hemisphere == 'south' else 'N'}:")
             st.write(f"📍 UTM_E: **{round(e, 2)}**  |  UTM_N: **{round(n, 2)}**")
             st.map(pd.DataFrame({'latitude': [lat], 'longitude': [lon]}))
 
@@ -84,7 +77,6 @@ else:
             st.success("Resultado em Coordenadas Geográficas:")
             st.write(f"🌍 Latitude: **{round(lat, 6)}**  |  Longitude: **{round(lon, 6)}**")
             st.map(pd.DataFrame({'latitude': [lat], 'longitude': [lon]}))
-
 
     elif opcao == "🧭 GMS → Geográficas":
         st.markdown("### ✏️ Entrada Manual de Coordenadas em Graus, Minutos e Segundos")
@@ -111,4 +103,3 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
-
