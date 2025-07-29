@@ -16,6 +16,7 @@ with st.sidebar:
     st.image("https://img.icons8.com/emoji/96/compass-emoji.png", width=64)
     st.header("⚙️ Opções")
     modo = st.radio("Modo de Conversão:", ["📁 Arquivo CSV", "⌨️ Entrada Manual"])
+    opcao = st.radio("Tipo de Conversão:", ["🌍 Geográficas → UTM", "📐 UTM → Geográficas", "🧭 GMS → Geográficas"])
     
 opcao = st.radio("Tipo de Conversão:", [
     "🌍 Geográficas → UTM", 
@@ -33,6 +34,8 @@ if modo == "📁 Arquivo CSV":
         st.info("Seu arquivo deve conter as colunas: `latitude` e `longitude` (em graus decimais).")
     elif opcao == "📐 UTM → Geográficas":
         st.info("Seu arquivo deve conter as colunas: `UTM_E` e `UTM_N` (em metros, Zona 24S).")
+    elif opcao == "🧭 GMS → Geográficas":
+        st.info("Seu CSV deve conter as colunas: `lat_grau`, `lat_min`, `lat_seg`, `lat_dir`, `lon_grau`, `lon_min`, `lon_seg`, `lon_dir`.")
 
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
