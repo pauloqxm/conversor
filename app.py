@@ -23,7 +23,7 @@ opcao = st.radio("Tipo de Conversão:", [
     "🧭 GMS → Geográficas"
 ])
 
-    st.markdown("---")
+st.markdown("---")
 
 if modo == "📁 Arquivo CSV":
     st.markdown("### 📄 Envie seu arquivo CSV")
