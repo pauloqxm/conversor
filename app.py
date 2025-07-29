@@ -86,8 +86,9 @@ else:
         if st.button("Converter"):
             proj_utm = pyproj.Transformer.from_crs("epsg:4326", "epsg:32724", always_xy=True)
             e, n = proj_utm.transform(lon, lat)
-            st.success(f"Resultado UTM (Zona 24S):")
+            st.success("Resultado UTM (Zona 24S):")
             st.write(f"📍 UTM_E: **{round(e, 2)}**  |  UTM_N: **{round(n, 2)}**")
+            st.map(pd.DataFrame({'latitude': [lat], 'longitude': [lon]}))
 
     else:
         e = st.number_input("UTM_E (metros)", format="%.2f")
@@ -98,3 +99,4 @@ else:
             lon, lat = proj_geo.transform(e, n)
             st.success("Resultado em Coordenadas Geográficas:")
             st.write(f"🌍 Latitude: **{round(lat, 6)}**  |  Longitude: **{round(lon, 6)}**")
+            st.map(pd.DataFrame({'latitude': [lat], 'longitude': [lon]}))
