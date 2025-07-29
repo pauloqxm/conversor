@@ -3,13 +3,14 @@ import streamlit as st
 import pandas as pd
 import pyproj
 from io import BytesIO
-import pydeck as pdk
 
 st.set_page_config(page_title="Conversor Geográfico UTM <-> LatLong", layout="centered")
 
 st.title("Conversor de Coordenadas Geográficas ↔️ UTM (Zona 24S)")
 
-opcao = st.radio("Escolha a direção da conversão:", ["Geográficas → UTM", "UTM → Geográficas"])
+with st.sidebar:
+    st.header("⚙️ Opções")
+    opcao = st.radio("Escolha a direção da conversão:", ["Geográficas → UTM", "UTM → Geográficas"])
 
 uploaded_file = st.file_uploader("📁 Envie seu arquivo CSV", type="csv", key="upload_csv_unico")
 
@@ -27,7 +28,6 @@ if uploaded_file:
             df['UTM_N'] = [round(n, 2) for n in northing]
 
             st.dataframe(df[['latitude', 'longitude', 'UTM_E', 'UTM_N']])
-
             st.map(df[['latitude', 'longitude']].dropna())
 
         else:
@@ -43,7 +43,6 @@ if uploaded_file:
             df['latitude'] = [round(lat_, 6) for lat_ in lat]
 
             st.dataframe(df[['UTM_E', 'UTM_N', 'latitude', 'longitude']])
-
             st.map(df[['latitude', 'longitude']].dropna())
 
         else:
