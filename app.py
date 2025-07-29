@@ -61,7 +61,7 @@ if modo == "📁 Arquivo CSV":
                     lon, lat = proj_geo.transform(df['UTM_E'].values, df['UTM_N'].values)
                     df['longitude'] = [round(lon_, 6) for lon_ in lon]
                     df['latitude'] = [round(lat_, 6) for lat_ in lat]
-                    st.dataframe(df[['UTM_E', 'UTM_N', 'latitude', 'longitude']])
+                    st.dataframe(df[['latitude', 'longitude', 'UTM_E', 'UTM_N']])
                     st.map(df[['latitude', 'longitude']].dropna())
                     csv = df.to_csv(index=False).encode("utf-8")
                     st.download_button("📥 Baixar arquivo convertido", csv, "convertido.csv", "text/csv")
