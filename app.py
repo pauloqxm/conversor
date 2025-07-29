@@ -43,7 +43,9 @@ if modo == "📁 Arquivo CSV":
 
         if opcao == "🌍 Geográficas → UTM":
             if 'latitude' in df.columns and 'longitude' in df.columns:
-                proj_utm = pyproj.Transformer.from_crs("epsg:4326", "epsg:32724", always_xy=True)
+                zone = int((lon + 180) / 6) + 1
+                hemisphere = "south" if lat < 0 else "north"
+                proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={{zone}} +south" if hemisphere == "south" else f"+proj=utm +zone={{zone}} +north", always_xy=True)
                 easting, northing = proj_utm.transform(df['longitude'].values, df['latitude'].values)
                 df['UTM_E'] = [round(e, 2) for e in easting]
                 df['UTM_N'] = [round(n, 2) for n in northing]
@@ -64,9 +66,11 @@ else:
         lat = st.number_input("Latitude (graus decimais)", format="%.6f")
         lon = st.number_input("Longitude (graus decimais)", format="%.6f")
         if st.button("Converter"):
-            proj_utm = pyproj.Transformer.from_crs("epsg:4326", "epsg:32724", always_xy=True)
+            zone = int((lon + 180) / 6) + 1
+                hemisphere = "south" if lat < 0 else "north"
+                proj_utm = pyproj.Transformer.from_crs("epsg:4326", f"+proj=utm +zone={{zone}} +south" if hemisphere == "south" else f"+proj=utm +zone={{zone}} +north", always_xy=True)
             e, n = proj_utm.transform(lon, lat)
-            st.success("Resultado UTM (Zona 24S):")
+            st.success(f"Resultado UTM — Zona {zone}{"/S" if hemisphere == "south" else "/N"}:")
             st.write(f"📍 UTM_E: **{round(e, 2)}**  |  UTM_N: **{round(n, 2)}**")
             st.map(pd.DataFrame({'latitude': [lat], 'longitude': [lon]}))
 
