@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import pyproj
@@ -11,6 +12,7 @@ uploaded_file = st.file_uploader("📁 Envie seu arquivo CSV com colunas 'latitu
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
+    df.columns = df.columns.str.strip()  # Remove espaços dos nomes das colunas
 
     if 'latitude' in df.columns and 'longitude' in df.columns:
         st.success("Arquivo lido com sucesso!")
