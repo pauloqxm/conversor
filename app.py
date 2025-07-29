@@ -17,7 +17,14 @@ with st.sidebar:
     st.header("⚙️ Opções")
     opcao = st.radio("Tipo de Conversão:", ["🌍 Geográficas → UTM", "📐 UTM → Geográficas"])
     st.markdown("---")
-    uploaded_file = st.file_uploader("📁 Envie seu arquivo CSV", type="csv", key="upload_csv_unico")
+
+st.markdown("### 📄 Envie seu arquivo CSV")
+uploaded_file = st.file_uploader("Escolha um arquivo com os nomes de colunas adequados", type="csv", key="upload_csv_unico")
+
+if opcao == "🌍 Geográficas → UTM":
+    st.info("Seu arquivo deve conter as colunas: `latitude` e `longitude` (em graus decimais).")
+else:
+    st.info("Seu arquivo deve conter as colunas: `UTM_E` e `UTM_N` (em metros, Zona 24S).")
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
@@ -41,7 +48,7 @@ if uploaded_file:
                 st.map(df[['latitude', 'longitude']].dropna())
 
         else:
-            st.error("❌ O arquivo deve conter as colunas 'latitude' e 'longitude'.")
+            st.error("❌ O arquivo não contém as colunas necessárias: 'latitude' e 'longitude'.")
 
     else:  # 📐 UTM → Geográficas
         if 'UTM_E' in df.columns and 'UTM_N' in df.columns:
@@ -58,7 +65,7 @@ if uploaded_file:
             with aba2:
                 st.map(df[['latitude', 'longitude']].dropna())
         else:
-            st.error("❌ O arquivo deve conter as colunas 'UTM_E' e 'UTM_N'.")
+            st.error("❌ O arquivo não contém as colunas necessárias: 'UTM_E' e 'UTM_N'.")
 
     def converter_para_csv_bytes(df):
         buffer = BytesIO()
