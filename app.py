@@ -135,7 +135,7 @@ st.markdown(f"""
 
     <div class="custom-header">
         <div class="header-top">
-            <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
+            <div class="header-title">🌐 Conversor de Coordenadas</div>
             <div class="nav">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle">📸 Vinculadas</a>
@@ -312,6 +312,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
