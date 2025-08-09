@@ -30,7 +30,7 @@ st.markdown(f"""
         inset: 0 0 auto 0;
         width: 100%;
         color: var(--text);
-        padding: 14px 20px;
+        padding: 10px 20px;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Tahoma, sans-serif;
         background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
         border-bottom: 1px solid rgba(255,255,255,.15);
@@ -41,8 +41,33 @@ st.markdown(f"""
         overflow: visible;
     }}
 
-    .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
-    .header-title {{ font-size: 16px; text-align: center; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15); }}
+    .header-top {{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        font-weight: 700;
+    }}
+
+    .logo-title {{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }}
+
+    .logo-title img {{
+        height: 38px;
+        width: auto;
+        display: block;
+    }}
+
+    .header-title {{
+        font-size: 16px;
+        line-height: 1.4;
+        text-shadow: 0 1px 0 rgba(0,0,0,.15);
+        white-space: nowrap;
+    }}
 
     .nav {{
         display: flex; justify-content: center; align-items: center;
@@ -51,8 +76,8 @@ st.markdown(f"""
 
     /* Botão tipo "chip" */
     .btn-chip {{
-        color: var(--text) !important;       /* cor branca fixa */
-        text-decoration: none !important;    /* remove sublinhado */
+        color: var(--text) !important;
+        text-decoration: none !important;
         font-weight: 600;
         padding: 10px 16px;
         border-radius: 999px;
@@ -104,8 +129,8 @@ st.markdown(f"""
 
     /* Links do submenu */
     .dropdown-content a {{
-        color: var(--text) !important;        /* cor branca fixa */
-        text-decoration: none !important;     /* remove sublinhado */
+        color: var(--text) !important;
+        text-decoration: none !important;
         position: relative;
         display: flex; align-items: center; gap: 10px;
         padding: 12px 12px;
@@ -122,14 +147,16 @@ st.markdown(f"""
         section.main > div.block-container {{ padding-top: 96px; }}
         .nav {{ gap: 10px; }}
         .dropdown-content {{ min-width: 180px; }}
-        .stButton > button {{ width: 100% !important; }}
-        .block-container div[data-testid="column"] {{ width: 100% !important; flex: 1 1 100% !important; }}
+        .logo-title img {{ height: 32px; }}
     }}
     </style>
 
     <div class="custom-header">
         <div class="header-top">
-            <div class="header-title">🌐 Conversor de Coordenadas</div>
+            <div class="logo-title">
+                <img src="https://i.ibb.co/Kp64sjfH/LUPA.png" alt="Logo">
+                <div class="header-title">🌐 Conversor de Coordenadas</div>
+            </div>
             <div class="nav">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
@@ -163,6 +190,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ====================== TÍTULO ======================
@@ -291,6 +319,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
