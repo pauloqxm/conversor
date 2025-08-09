@@ -41,37 +41,36 @@ st.markdown(f"""
         overflow: visible;
     }}
 
-    /* Topo em grid: [hambúrguer | título | espaço] */
-    .header-top {{
-        display: grid;
-        grid-template-columns: 40px 1fr 40px;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
+    .header-top {{ 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        gap: 10px; 
+        font-weight: 700; 
         position: relative;
     }}
-    .header-title {{
-        font-size: 16px;
-        text-align: center;
-        line-height: 1.4;
-        text-shadow: 0 1px 0 rgba(0,0,0,.15);
+    .header-title {{ 
+        font-size: 16px; 
+        text-align: center; 
+        line-height: 1.4; 
+        text-shadow: 0 1px 0 rgba(0,0,0,.15); 
+        margin-left: 40px; /* Compensa o espaço do hamburger */
     }}
 
     .nav {{
-        display: flex;
-        justify-content: center;
+        display: flex; 
+        justify-content: center; 
         align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-        position: relative;
+        gap: 16px; 
+        flex-wrap: wrap; 
+        position: relative; 
         z-index: 100001;
-        margin-top: 10px; /* espaço abaixo do título em desktop */
     }}
 
-    /* Botão tipo chip */
+    /* Botão tipo "chip" */
     .btn-chip {{
-        color: var(--text) !important;
-        text-decoration: none !important;
+        color: var(--text) !important;       /* cor branca fixa */
+        text-decoration: none !important;    /* remove sublinhado */
         font-weight: 600;
         padding: 10px 16px;
         border-radius: 999px;
@@ -91,7 +90,6 @@ st.markdown(f"""
         border-color: rgba(255,255,255,0.32);
     }}
 
-    /* Dropdown */
     .dropdown {{ position: relative; display: inline-block; }}
     .dropdown > a.btn-chip {{ padding-right: 16px; }}
     .dropdown > a .caret {{
@@ -104,35 +102,38 @@ st.markdown(f"""
         transition: transform .25s ease;
         opacity: .9;
     }}
+    .dropdown:hover > a .caret,
     .dropdown.open > a .caret {{
         transform: translateY(-1px) rotate(-135deg);
     }}
 
     /* Submenu */
     .dropdown-content {{
-        display: none;
-        position: absolute;
-        left: 0; top: 100%;
-        min-width: 220px;
+        display: none; 
+        position: absolute; 
+        left: 0; 
+        top: 100%;
+        min-width: 220px; 
         background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--radius);
+        border-radius: var(--radius); 
         padding: 8px;
         margin-top: 2px;
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow); 
         z-index: 100002;
-        -webkit-backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); 
         backdrop-filter: blur(8px);
     }}
+    .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
 
     /* Links do submenu */
     .dropdown-content a {{
-        color: var(--text) !important;
-        text-decoration: none !important;
+        color: var(--text) !important;        /* cor branca fixa */
+        text-decoration: none !important;     /* remove sublinhado */
         position: relative;
-        display: flex;
-        align-items: center;
+        display: flex; 
+        align-items: center; 
         gap: 10px;
         padding: 12px 12px;
         border-radius: 10px;
@@ -144,17 +145,17 @@ st.markdown(f"""
         transform: translateX(2px);
     }}
 
-    /* Hamburguer (à esquerda) */
+    /* Menu Hamburguer */
     .hamburger {{
         display: none;
         cursor: pointer;
         padding: 10px;
         position: absolute;
-        left: 20px;
-        right: auto;
+        left: 20px;  /* Alterado para esquerda */
         top: 14px;
-        z-index: 100003; /* acima do header para receber clique */
+        z-index: 100003;
     }}
+    
     .hamburger span {{
         display: block;
         width: 25px;
@@ -163,16 +164,26 @@ st.markdown(f"""
         margin: 5px 0;
         transition: all 0.3s ease;
     }}
-    .hamburger.active span:nth-child(1) {{ transform: rotate(45deg) translate(5px, 5px); }}
-    .hamburger.active span:nth-child(2) {{ opacity: 0; }}
-    .hamburger.active span:nth-child(3) {{ transform: rotate(-45deg) translate(7px, -6px); }}
+    
+    .hamburger.active span:nth-child(1) {{
+        transform: rotate(45deg) translate(5px, 5px);
+    }}
+    
+    .hamburger.active span:nth-child(2) {{
+        opacity: 0;
+    }}
+    
+    .hamburger.active span:nth-child(3) {{
+        transform: rotate(-45deg) translate(7px, -6px);
+    }}
 
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
-
-        .hamburger {{ display: block; }}
-
-        /* Nav colapsada no mobile */
+        
+        .hamburger {{
+            display: block;
+        }}
+        
         .nav {{
             display: none;
             flex-direction: column;
@@ -184,10 +195,12 @@ st.markdown(f"""
             padding: 20px;
             box-shadow: var(--shadow);
             border-radius: 0 0 var(--radius) var(--radius);
-            margin-top: 0; /* sem espaço extra no mobile */
         }}
-        .nav.active {{ display: flex; }}
-
+        
+        .nav.active {{
+            display: flex;
+        }}
+        
         .dropdown-content {{
             position: static;
             display: none;
@@ -196,12 +209,16 @@ st.markdown(f"""
             background: rgba(0,0,0,0.1);
             margin-top: 10px;
         }}
-        .dropdown.open > .dropdown-content {{ display: block; }}
-
+        
+        .dropdown.open > .dropdown-content {{
+            display: block;
+        }}
+        
         .dropdown > a.btn-chip {{
             width: 100%;
             justify-content: space-between;
         }}
+        
         .btn-chip {{
             width: 100%;
             justify-content: center;
@@ -212,18 +229,12 @@ st.markdown(f"""
 
     <div class="custom-header">
         <div class="header-top">
-            <!-- Hambúrguer à esquerda -->
-            <button id="hamburger" class="hamburger" aria-label="Abrir menu" aria-expanded="false">
-                <span></span><span></span><span></span>
-            </button>
-
-            <!-- Título centralizado -->
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <div class="header-title">🌐 Conversor de Coordenadas</div>
-
-            <!-- Espaço à direita para balancear o grid -->
-            <div style="width:40px;"></div>
-
-            <!-- Navegação -->
             <div class="nav" id="mobileNav">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
@@ -240,38 +251,38 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Toggle do dropdown (submenu)
-    document.addEventListener('click', function (e) {{
-        const toggle = e.target.closest('.dropdown-toggle');
-        const opened = document.querySelectorAll('.dropdown.open');
-
-        if (!toggle && !e.target.closest('.dropdown')) {{
-            opened.forEach(dd => dd.classList.remove('open'));
-            return;
-        }}
-        if (toggle) {{
-            e.preventDefault();
-            const parent = toggle.closest('.dropdown');
-            opened.forEach(dd => {{ if (dd !== parent) dd.classList.remove('open'); }});
-            parent.classList.toggle('open');
-        }}
-    }});
-
-    // Toggle do menu mobile (hambúrguer)
     function toggleMenu() {{
         const nav = document.getElementById('mobileNav');
-        const hamburger = document.getElementById('hamburger');
-        if (!nav || !hamburger) return;
+        const hamburger = document.querySelector('.hamburger');
         nav.classList.toggle('active');
         hamburger.classList.toggle('active');
-        const expanded = hamburger.getAttribute('aria-expanded') === 'true';
-        hamburger.setAttribute('aria-expanded', (!expanded).toString());
     }}
 
-    // Garante o bind mesmo se onclick inline for ignorado
-    document.addEventListener('DOMContentLoaded', function() {{
-        const hb = document.getElementById('hamburger');
-        if (hb) hb.addEventListener('click', toggleMenu);
+    document.addEventListener('click', function (e) {{
+      // Fecha o menu se clicar fora
+      if (!e.target.closest('.hamburger') && !e.target.closest('.nav')) {{
+        const nav = document.getElementById('mobileNav');
+        const hamburger = document.querySelector('.hamburger');
+        if (nav.classList.contains('active')) {{
+            nav.classList.remove('active');
+            hamburger.classList.remove('active');
+        }}
+      }}
+      
+      // Lógica dos dropdowns
+      const toggle = e.target.closest('.dropdown-toggle');
+      const opened = document.querySelectorAll('.dropdown.open');
+
+      if (!toggle && !e.target.closest('.dropdown')) {{
+        opened.forEach(dd => dd.classList.remove('open'));
+        return;
+      }}
+      if (toggle) {{
+        e.preventDefault();
+        const parent = toggle.closest('.dropdown');
+        opened.forEach(dd => {{ if (dd !== parent) dd.classList.remove('open'); }});
+        parent.classList.toggle('open');
+      }}
     }});
     </script>
 """, unsafe_allow_html=True)
@@ -403,6 +414,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
