@@ -4,31 +4,27 @@ import pyproj
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial_sidebar_state="collapsed")
 
-# ====================== HEADER + NAV (RESPONSIVO) ======================
+# ====================== HEADER + NAV (RESPONSIVO c/ HAMBÚRGUER) ======================
 st.markdown(f"""
     <style>
     :root {{
-        --brand: #1e8c3a;       /* verde principal */
-        --brand-light: #34c759; /* verde claro */
-        --brand-dark: #0d5c26;  /* verde escuro */
+        --brand: #1e8c3a;
+        --brand-light: #34c759;
+        --brand-dark: #0d5c26;
         --accent: #ffffff;
-        --text: #ffffff;        /* cor fixa do texto */
+        --text: #ffffff;
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
         --radius: 14px;
     }}
 
     [data-testid="stHeader"] {{ visibility: hidden; }}
     section.main > div.block-container {{
-        position: relative;
-        z-index: 1;
-        padding-top: 120px;
-        padding-bottom: 16px;
+        position: relative; z-index: 1;
+        padding-top: 120px; padding-bottom: 16px;
     }}
 
     .custom-header {{
-        position: fixed;
-        inset: 0 0 auto 0;
-        width: 100%;
+        position: fixed; inset: 0 0 auto 0; width: 100%;
         color: var(--text);
         padding: 14px 20px;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Tahoma, sans-serif;
@@ -41,30 +37,31 @@ st.markdown(f"""
         overflow: visible;
     }}
 
-    .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
-    .header-title {{ font-size: 16px; text-align: center; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15); }}
+    .header-top {{ 
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; font-weight: 700;
+    }}
+    .brand {{
+        display: flex; align-items: center; gap: 10px;
+        font-size: 16px; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15);
+    }}
 
     .nav {{
         display: flex; justify-content: center; align-items: center;
         gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
 
-    /* Botão tipo "chip" */
+    /* Botão tipo chip */
     .btn-chip {{
-        color: var(--text) !important;       /* cor branca fixa */
-        text-decoration: none !important;    /* remove sublinhado */
-        font-weight: 600;
-        padding: 10px 16px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
+        color: var(--text) !important;
+        text-decoration: none !important;
+        font-weight: 600; padding: 10px 16px; border-radius: 999px;
+        display: inline-flex; align-items: center; gap: 8px;
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.22);
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
         transition: transform .15s ease, background .2s ease, border-color .2s ease;
-        -webkit-tap-highlight-color: transparent;
-        position: relative;
+        -webkit-tap-highlight-color: transparent; position: relative;
     }}
     .btn-chip:hover {{
         transform: translateY(-1px);
@@ -75,94 +72,152 @@ st.markdown(f"""
     .dropdown {{ position: relative; display: inline-block; }}
     .dropdown > a.btn-chip {{ padding-right: 16px; }}
     .dropdown > a .caret {{
-        display: inline-block;
-        width: 10px; height: 10px;
-        margin-left: 10px;
-        border-right: 2px solid #fff;
-        border-bottom: 2px solid #fff;
+        display: inline-block; width: 10px; height: 10px; margin-left: 10px;
+        border-right: 2px solid #fff; border-bottom: 2px solid #fff;
         transform: translateY(-1px) rotate(45deg);
-        transition: transform .25s ease;
-        opacity: .9;
+        transition: transform .25s ease; opacity: .9;
     }}
     .dropdown:hover > a .caret,
-    .dropdown.open > a .caret {{
-        transform: translateY(-1px) rotate(-135deg);
-    }}
+    .dropdown.open > a .caret {{ transform: translateY(-1px) rotate(-135deg); }}
 
-    /* Submenu */
     .dropdown-content {{
         display: none; position: absolute; left: 0; top: 100%;
         min-width: 220px; background: var(--brand-light);
-        border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--radius); padding: 8px;
-        margin-top: 2px;
-        box-shadow: var(--shadow); z-index: 100002;
+        border: 1px solid rgba(255,255,255,0.18); border-radius: var(--radius);
+        padding: 8px; margin-top: 2px; box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
 
-    /* Links do submenu */
     .dropdown-content a {{
-        color: var(--text) !important;        /* cor branca fixa */
-        text-decoration: none !important;     /* remove sublinhado */
-        position: relative;
-        display: flex; align-items: center; gap: 10px;
-        padding: 12px 12px;
-        border-radius: 10px;
-        font-weight: 600;
+        color: var(--text) !important; text-decoration: none !important;
+        position: relative; display: flex; align-items: center; gap: 10px;
+        padding: 12px 12px; border-radius: 10px; font-weight: 600;
         transition: background .18s ease, transform .12s ease;
     }}
-    .dropdown-content a:hover {{
-        background: rgba(255,255,255,0.16);
-        transform: translateX(2px);
-    }}
+    .dropdown-content a:hover {{ background: rgba(255,255,255,0.16); transform: translateX(2px); }}
 
+    /* ====== HAMBÚRGUER + MENU MOBILE ====== */
+    .hamburger {{
+        display: none; width: 42px; height: 38px; border-radius: 10px;
+        border: 1px solid rgba(255,255,255,.25);
+        background: rgba(255,255,255,.08);
+        align-items: center; justify-content: center; cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }}
+    .hamburger span, .hamburger::before, .hamburger::after {{
+        content: ""; display: block; width: 22px; height: 2px; background: #fff;
+        margin: 4px 0; transition: transform .25s ease, opacity .2s ease;
+    }}
+    .hamburger.open span {{ opacity: 0; }}
+    .hamburger.open::before {{ transform: translateY(6px) rotate(45deg); }}
+    .hamburger.open::after  {{ transform: translateY(-6px) rotate(-45deg); }}
+
+    .mobile-backdrop {{
+        position: fixed; inset: 0; background: rgba(0,0,0,.35);
+        opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 100002;
+    }}
+    .mobile-panel {{
+        position: fixed; top: 0; right: 0; height: 100vh; width: min(86vw, 360px);
+        background: linear-gradient(180deg, var(--brand) 0%, var(--brand-dark) 100%);
+        box-shadow: -8px 0 24px rgba(0,0,0,.28); transform: translateX(100%);
+        transition: transform .25s ease; z-index: 100003; padding: 18px;
+        display: flex; flex-direction: column; gap: 12px;
+        border-left: 1px solid rgba(255,255,255,.2);
+    }}
+    .mobile-panel .section-title {{
+        font-weight: 800; font-size: 14px; letter-spacing: .4px; opacity: .9; margin: 6px 2px 4px;
+    }}
+    .mobile-panel .btn-chip {{ width: 100%; justify-content: flex-start; }}
+
+    body.mobile-open .mobile-backdrop {{ opacity: 1; pointer-events: auto; }}
+    body.mobile-open .mobile-panel   {{ transform: translateX(0); }}
+
+    /* Ajustes responsivos */
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
-        .nav {{ gap: 10px; }}
-        .dropdown-content {{ min-width: 180px; }}
-        .stButton > button {{ width: 100% !important; }}
-        .block-container div[data-testid="column"] {{ width: 100% !important; flex: 1 1 100% !important; }}
+        .nav {{ display: none; }}             /* esconde navegação desktop */
+        .hamburger {{ display: inline-flex; }}/* mostra botão */
     }}
     </style>
 
     <div class="custom-header">
         <div class="header-top">
-            <div class="header-title">🌐 Conversor de Coordenadas</div>
-            <div class="nav">
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
-                    <div class="dropdown-content">
-                        <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
-                        <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
-                        <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
-                    </div>
+            <div class="brand">🌐 Conversor de Coordenadas</div>
+
+            <!-- Botão hambúrguer só no mobile -->
+            <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"></button>
+        </div>
+
+        <!-- Navegação desktop (igual a antes) -->
+        <div class="nav">
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
+                <div class="dropdown-content">
+                    <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
+                    <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
+                    <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
                 </div>
-                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
-                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
             </div>
+            <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+            <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
         </div>
     </div>
 
-    <script>
-    document.addEventListener('click', function (e) {{
-      const toggle = e.target.closest('.dropdown-toggle');
-      const opened = document.querySelectorAll('.dropdown.open');
+    <!-- Overlay e painel de menu mobile -->
+    <div class="mobile-backdrop"></div>
+    <nav class="mobile-panel" aria-hidden="true">
+        <div class="section">
+            <div class="section-title">Vinculadas</div>
+            <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener" class="btn-chip">🏢 COGERH</a>
+            <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener" class="btn-chip">💧 SOHIDRA</a>
+            <a href="https://www.funceme.br/" target="_blank" rel="noopener" class="btn-chip">🌦️ FUNCEME</a>
+        </div>
+        <div class="section">
+            <div class="section-title">Redes</div>
+            <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+            <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
+        </div>
+    </nav>
 
-      if (!toggle && !e.target.closest('.dropdown')) {{
-        opened.forEach(dd => dd.classList.remove('open'));
-        return;
-      }}
-      if (toggle) {{
-        e.preventDefault();
-        const parent = toggle.closest('.dropdown');
-        opened.forEach(dd => {{ if (dd !== parent) dd.classList.remove('open'); }});
-        parent.classList.toggle('open');
-      }}
-    }});
+    <script>
+    (function() {{
+        const btn = document.querySelector('.hamburger');
+        const backdrop = document.querySelector('.mobile-backdrop');
+        const panel = document.querySelector('.mobile-panel');
+
+        function openMenu() {{
+            document.body.classList.add('mobile-open');
+            btn.classList.add('open');
+            btn.setAttribute('aria-expanded','true');
+            panel.setAttribute('aria-hidden','false');
+        }}
+        function closeMenu() {{
+            document.body.classList.remove('mobile-open');
+            btn.classList.remove('open');
+            btn.setAttribute('aria-expanded','false');
+            panel.setAttribute('aria-hidden','true');
+        }}
+
+        btn?.addEventListener('click', (e) => {{
+            e.preventDefault();
+            if (document.body.classList.contains('mobile-open')) closeMenu(); else openMenu();
+        }});
+
+        backdrop?.addEventListener('click', closeMenu);
+        panel?.addEventListener('click', (e) => {{
+            if (e.target.matches('a')) closeMenu();
+        }});
+
+        // Fecha com Esc
+        document.addEventListener('keydown', (e) => {{
+            if (e.key === 'Escape') closeMenu();
+        }});
+    }})();
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ====================== TÍTULO ======================
@@ -291,4 +346,5 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
