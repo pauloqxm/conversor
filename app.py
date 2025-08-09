@@ -4,34 +4,31 @@ import pyproj
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 
-# ---------------------- HEADER + MENU SUSPENSO (Estilo Moderno) ----------------------
+# ---------------------- HEADER + MENU SUSPENSO (Estilo Moderno / Cor #fcb205) ----------------------
 st.markdown(f"""
     <style>
-    /* ================== Tokens de tema ================== */
     :root {{
-        --brand: #04a5c9;
-        --brand-2: #08b9dd;
-        --brand-3: #027ea0;
-        --accent: #fad905;
+        --brand: #fcb205; /* cor principal */
+        --brand-light: #ffd84f; /* versão mais clara */
+        --brand-dark: #c98b00; /* versão mais escura */
+        --accent: #ffffff;     /* cor de destaque (sub-linha e textos) */
         --text: #ffffff;
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
         --radius: 14px;
     }}
 
-    /* Esconde o header nativo do Streamlit */
     [data-testid="stHeader"] {{
         visibility: hidden;
     }}
 
-    /* ================== HEADER ================== */
     .custom-header {{
         position: fixed;
-        inset: 0 0 auto 0;         /* top:0; left:0; right:0 */
+        inset: 0 0 auto 0;
         width: 100%;
         color: var(--text);
         padding: 14px 28px;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Tahoma, sans-serif;
-        background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+        background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
         border-bottom: 1px solid rgba(255,255,255,.15);
         box-shadow: inset 0 -1px 0 rgba(255,255,255,.06), var(--shadow);
         z-index: 100000;
@@ -40,14 +37,12 @@ st.markdown(f"""
         backdrop-filter: saturate(120%) blur(4px);
     }}
 
-    /* Espaço pro conteúdo */
     section.main > div.block-container {{
         position: relative;
         z-index: 1;
-        padding-top: 120px; /* ajuste fino se necessário */
+        padding-top: 120px;
     }}
 
-    /* ================== Layout topo ================== */
     .header-top {{
         display: flex;
         flex-direction: column;
@@ -64,7 +59,6 @@ st.markdown(f"""
         text-shadow: 0 1px 0 rgba(0,0,0,.15);
     }}
 
-    /* ================== NAV ================== */
     .nav {{
         display: flex;
         justify-content: center;
@@ -75,7 +69,6 @@ st.markdown(f"""
         z-index: 100000;
     }}
 
-    /* Link base (pílula) */
     .nav a, .nav .dropdown > a {{
         color: var(--text);
         text-decoration: none;
@@ -92,11 +85,10 @@ st.markdown(f"""
     }}
     .nav a:hover {{
         transform: translateY(-1px);
-        background: rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.12);
         border-color: rgba(255,255,255,0.24);
     }}
 
-    /* Sub-linha animada (underline reveal) */
     .nav a::after {{
         content: "";
         position: absolute;
@@ -113,18 +105,16 @@ st.markdown(f"""
         transform: scaleX(1);
     }}
 
-    /* ================== DROPDOWN ================== */
     .dropdown {{
         position: relative;
         display: inline-block;
     }}
     .dropdown > a {{
         cursor: pointer;
-        padding-right: 30px;      /* espaço pra seta */
-        padding-bottom: 14px;     /* aumenta área e encosta no submenu (anti-gap) */
+        padding-right: 30px;
+        padding-bottom: 14px;
     }}
 
-    /* Seta (caret) que gira ao abrir */
     .dropdown > a .caret {{
         position: absolute;
         right: 10px;
@@ -140,18 +130,17 @@ st.markdown(f"""
         transform: translateY(-50%) rotate(180deg);
     }}
 
-    /* Conteúdo do dropdown com glass + sem “gap” */
     .dropdown-content {{
         display: none;
         position: absolute;
         left: 0;
-        top: 100%;  /* cola no gatilho */
+        top: 100%;
         min-width: 220px;
-        background: rgba(3, 133, 164, 0.92);
+        background: rgba(252, 178, 5, 0.92);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius);
         padding: 8px;
-        margin-top: 6px; /* sombra suave sem criar vão real */
+        margin-top: 6px;
         box-shadow: var(--shadow);
         z-index: 100001;
         pointer-events: auto;
@@ -159,7 +148,6 @@ st.markdown(f"""
         backdrop-filter: blur(8px);
     }}
 
-    /* Ponte anti-gap para manter o hover ao descer o mouse */
     .dropdown-content::before {{
         content: "";
         position: absolute;
@@ -170,11 +158,9 @@ st.markdown(f"""
         background: transparent;
     }}
 
-    /* Abre por hover (desktop) e por clique (mobile/fallback) */
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
 
-    /* Itens do submenu */
     .dropdown-content a {{
         display: flex;
         align-items: center;
@@ -188,11 +174,10 @@ st.markdown(f"""
         position: relative;
     }}
     .dropdown-content a:hover {{
-        background: rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.12);
         transform: translateX(2px);
     }}
 
-    /* ================== Responsivo ================== */
     @media (max-width: 720px) {{
         .header-title {{ font-size: 14px; }}
         .nav {{ gap: 10px; }}
@@ -222,7 +207,6 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Clique como fallback ao hover (mobile/desktop)
     window.addEventListener('DOMContentLoaded', function() {{
         const toggles = document.querySelectorAll('.dropdown-toggle');
         toggles.forEach(function(tg) {{
@@ -244,8 +228,6 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
-
-
 
 # ---------------------- TÍTULO ----------------------
 
@@ -383,6 +365,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
