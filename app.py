@@ -8,9 +8,9 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial
 st.markdown(f"""
     <style>
     :root {{
-        --brand: #1e8c3a;
-        --brand-light: #34c759;
-        --brand-dark: #0d5c26;
+        --brand: #1e8c3a;       /* verde principal */
+        --brand-light: #34c759; /* verde claro */
+        --brand-dark: #0d5c26;  /* verde escuro */
         --accent: #ffffff;
         --text: #ffffff;
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
@@ -49,77 +49,82 @@ st.markdown(f"""
         gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
 
-    .nav a, .nav .dropdown > a {{
-        color: var(--text); text-decoration: none; font-weight: 600;
-        padding: 10px 14px; border-radius: 999px; position: relative;
-        display: inline-flex; align-items: center; gap: 6px;
+    /* ===== Modelo de botão tipo "chip" ===== */
+    .btn-chip {{
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 10px 16px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.22);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
         transition: transform .15s ease, background .2s ease, border-color .2s ease;
         -webkit-tap-highlight-color: transparent;
     }}
-    .nav a:hover {{ transform: translateY(-1px); background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); }}
+    .btn-chip:hover {{
+        transform: translateY(-1px);
+        background: rgba(255,255,255,0.14);
+        border-color: rgba(255,255,255,0.32);
+    }}
 
-    /* Efeito “loading” na sublinha */
-    .nav a::after {{
+    /* Sublinha estática no hover (sem animação) */
+    .btn-chip::after {{
         content: "";
         position: absolute;
         left: 12px; right: 12px; bottom: 6px;
-        height: 2px;
-        background: linear-gradient(90deg, rgba(255,255,255,.25) 0%, #ffffff 50%, rgba(255,255,255,.25) 100%);
-        background-size: 200% 100%;
+        height: 2px; background: rgba(255,255,255,.95);
         border-radius: 2px;
         transform: scaleX(0);
         transform-origin: left;
         transition: transform .25s ease;
-        opacity: .95;
+        opacity: .9;
     }}
-    .nav a:hover::after,
-    .dropdown.open > a::after {{
-        transform: scaleX(1);
-        animation: shimmer 1.2s linear infinite;
-    }}
-    @keyframes shimmer {{
-        0% {{ background-position: 0% 50%; }}
-        100% {{ background-position: 200% 50%; }}
+    .btn-chip:hover::after,
+    .dropdown.open > a.btn-chip::after {{
+        transform: scaleX(1);   /* aparece, mas sem shimmer */
     }}
 
     .dropdown {{ position: relative; display: inline-block; }}
-    .dropdown > a {{
-        padding-right: 38px;  /* mais espaço para a seta */
-        padding-bottom: 14px;
-        cursor: pointer;
+
+    /* Toggle do dropdown usando o mesmo "chip" + caret CSS */
+    .dropdown > a.btn-chip {{
+        position: relative;
+        padding-right: 16px; /* padding normal, sem truques */
     }}
+
+    /* Chevron feito em CSS, com espaço próprio */
     .dropdown > a .caret {{
-        position: absolute;
-        right: 12px;           /* afasta do texto */
-        top: 50%;
-        transform: translateY(-50%) rotate(0deg);
-        transition: transform .25s ease;
-        font-size: 13px;       /* um pouco maior */
-        opacity: 0.9;
-        text-shadow: 0 1px 1px rgba(0,0,0,0.25);
-        pointer-events: none;
-        line-height: 1;
+        display: inline-block;
+        width: 10px; height: 10px;
+        margin-left: 10px;        /* <<< espaço da seta em relação ao texto */
+        border-right: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: translateY(-1px) rotate(45deg);
+        transition: transform .25s ease, margin-left .15s ease;
+        opacity: .9;
+    }}
+    .dropdown:hover > a .caret,
+    .dropdown.open > a .caret {{
+        transform: translateY(-1px) rotate(-135deg);
     }}
 
-    /* HOVER (desktop) */
-    .dropdown:hover > .dropdown-content {{ display: block; }}
-    .dropdown:hover > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
-
-    /* CLIQUE (mobile) */
-    .dropdown.open > .dropdown-content {{ display: block; }}
-    .dropdown.open > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
-
+    /* HOVER (desktop) e CLIQUE (mobile) */
     .dropdown-content {{
         display: none; position: absolute; left: 0; top: 100%;
         min-width: 220px; background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius); padding: 8px;
-        margin-top: 0px;  /* colado ao botão */
+        margin-top: 2px; /* colado ao botão */
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
+    .dropdown:hover > .dropdown-content {{ display: block; }}
+    .dropdown.open > .dropdown-content {{ display: block; }}
+
     .dropdown-content a {{
         display: flex; align-items: center; gap: 10px; color: var(--text);
         text-decoration: none; padding: 12px 12px; border-radius: 10px;
@@ -141,21 +146,21 @@ st.markdown(f"""
             <div class="header-title">🌐 Conversor de Coordenadas</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle">📸 Vinculadas <span class="caret">▼</span></a>
+                    <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
                     <div class="dropdown-content">
                         <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
                         <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
                         <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
                     </div>
                 </div>
-                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener">📘 Facebook</a>
-                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener">💬 WhatsApp</a>
+                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
             </div>
         </div>
     </div>
 
     <script>
-    // Delegação de eventos (não quebra com rerun do Streamlit)
+    // Delegação de eventos (resistente a reruns do Streamlit)
     document.addEventListener('click', function (e) {{
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
@@ -173,8 +178,6 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
-
-
 
 # ====================== TÍTULO ======================
 st.markdown(
@@ -302,6 +305,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
