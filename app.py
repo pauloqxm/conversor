@@ -7,10 +7,12 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 # ---------------------- HEADER + MENU SUSPENSO ----------------------
 st.markdown(f"""
     <style>
+    /* Esconde o header nativo do Streamlit */
     [data-testid="stHeader"] {{
         visibility: hidden;
     }}
 
+    /* Cabeçalho fixo */
     .custom-header {{
         position: fixed;
         top: 0; left: 0;
@@ -21,16 +23,18 @@ st.markdown(f"""
         font-family: Tahoma, sans-serif;
         border-bottom: 3px solid #fad905;
         z-index: 100000;
-        overflow: visible;
+        overflow: visible;         /* deixa o submenu sair do header */
         pointer-events: auto;
     }}
 
+    /* Garante espaço para o conteúdo abaixo do header */
     section.main > div.block-container {{
         position: relative;
         z-index: 1;
-        padding-top: 110px;
+        padding-top: 110px;        /* ajuste se seu header ficar maior/menor */
     }}
 
+    /* Título + menu centralizados */
     .header-top {{
         display: flex;
         flex-direction: column;
@@ -39,12 +43,13 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    .header-title {{ 
+    .header-title {{
         font-size: 14px;
         text-align: center;
         line-height: 1.4;
     }}
 
+    /* Barra de navegação centralizada */
     .nav {{
         display: flex;
         justify-content: center;
@@ -53,7 +58,6 @@ st.markdown(f"""
         position: relative;
         z-index: 100000;
     }}
-
     .nav a, .nav .dropdown > a {{
         color: white;
         text-decoration: none;
@@ -64,45 +68,58 @@ st.markdown(f"""
     }}
     .nav a:hover {{ background: rgba(0,0,0,0.1); }}
 
-    /* Seta branca para indicar dropdown */
-    .dropdown > a::after {{
-        content: "▼";
-        font-size: 10px;
-        margin-left: 5px;
-        color: white;
-        position: relative;
-        top: -1px;
-    }}
-
+    /* Dropdown */
     .dropdown {{
         position: relative;
         display: inline-block;
     }}
     .dropdown > a {{
         cursor: pointer;
+        padding-bottom: 12px;     /* mais área e encosta no submenu (anti-gap) */
     }}
+
+    /* Seta branca indicando que é suspenso */
+    .dropdown > a::after {{
+        content: "▼";
+        font-size: 10px;
+        margin-left: 6px;
+        color: white;
+        position: relative;
+        top: -1px;
+    }}
+
+    /* Submenu: encostado no botão, sem gap */
     .dropdown-content {{
         display: none;
         position: absolute;
         left: 0;
+        top: 100%;                /* cola no gatilho */
         background-color: #04a5c9;
         min-width: 180px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         border: 1px solid #038fb0;
         border-radius: 6px;
         padding: 6px 0;
-        margin-top: 6px;
         z-index: 100001;
         pointer-events: auto;
         white-space: nowrap;
     }}
 
-    .dropdown:hover > .dropdown-content {{
-        display: block;
+    /* “Ponte” anti-gap: mantém hover ao descer o mouse */
+    .dropdown-content::before {{
+        content: "";
+        position: absolute;
+        top: -10px;              /* sobe 10px acima do submenu */
+        left: 0;
+        right: 0;
+        height: 10px;            /* espessura da ponte */
+        background: transparent;
     }}
-    .dropdown.open > .dropdown-content {{
-        display: block;
-    }}
+
+    /* Abre no hover (desktop) */
+    .dropdown:hover > .dropdown-content {{ display: block; }}
+    /* Abre no clique (mobile/apoio) */
+    .dropdown.open > .dropdown-content {{ display: block; }}
 
     .dropdown-content a {{
         color: white;
@@ -135,6 +152,7 @@ st.markdown(f"""
     </div>
 
     <script>
+    // Suporte a clique: útil no mobile e como fallback ao hover
     window.addEventListener('DOMContentLoaded', function() {{
         const toggles = document.querySelectorAll('.dropdown-toggle');
         toggles.forEach(function(tg) {{
@@ -156,6 +174,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 # ---------------------- TÍTULO ----------------------
 
@@ -293,6 +312,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
