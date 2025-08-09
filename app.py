@@ -12,8 +12,11 @@ st.markdown(f"""
   --text:#fff; --shadow:0 10px 30px rgba(0,0,0,.18); --radius:14px;
 }
 [data-testid="stHeader"]{visibility:hidden;}
-section.main > div.block-container{position:relative;z-index:1;padding-top:120px;padding-bottom:16px;}
+section.main > div.block-container{
+  position:relative;z-index:1;padding-top:120px;padding-bottom:16px;
+}
 
+/* ---------- TOP BAR (desktop & mobile) ---------- */
 .custom-header{
   position:fixed; inset:0 0 auto 0; width:100%;
   color:var(--text); padding:10px 20px;
@@ -22,16 +25,12 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
   border-bottom:1px solid rgba(255,255,255,.15);
   box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), var(--shadow);
   z-index:100000; -webkit-backdrop-filter:saturate(120%) blur(4px); backdrop-filter:saturate(120%) blur(4px);
-  overflow:visible;
 }
-
-/* TOP BAR */
 .header-top{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .logo-title{display:flex;align-items:center;gap:10px;min-width:0;}
 .logo-title img{height:36px;width:auto;display:block;}
 .header-title{font-size:16px;line-height:1.3;text-shadow:0 1px 0 rgba(0,0,0,.15);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* NAV (desktop) */
 .nav{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;z-index:100001;}
 .btn-chip{
   color:var(--text)!important;text-decoration:none!important;font-weight:600;
@@ -42,7 +41,6 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
 }
 .btn-chip:hover{transform:translateY(-1px);background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.32);}
 
-/* Caret (chevron) com espaçamento */
 .dropdown{position:relative;display:inline-block;}
 .dropdown > a.btn-chip{padding-right:16px;}
 .dropdown > a .caret{
@@ -51,8 +49,6 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
   transform:translateY(-1px) rotate(45deg);transition:transform .25s ease;opacity:.9;
 }
 .dropdown:hover > a .caret,.dropdown.open > a .caret{transform:translateY(-1px) rotate(-135deg);}
-
-/* Submenu (desktop) */
 .dropdown-content{
   display:none;position:absolute;left:0;top:100%;min-width:220px;background:var(--brand-light);
   border:1px solid rgba(255,255,255,.18);border-radius:var(--radius);padding:8px;margin-top:2px;
@@ -65,37 +61,57 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
 }
 .dropdown-content a:hover{background:rgba(255,255,255,.16);transform:translateX(2px);}
 
-/* ===== MOBILE ===== */
+/* ---------- Drawer (mobile) ---------- */
 .hamburger{display:none;}
 
 @media (max-width:768px){
-  section.main > div.block-container{padding-top:140px;} /* mais espaço pq o menu pode abrir */
+  section.main > div.block-container{padding-top:140px;}
   .logo-title img{height:28px;}
   .header-title{font-size:15px;}
+  .nav{display:none;} /* esconde nav desktop */
 
-  /* mostra botão hambúrguer e esconde nav padrão */
   .hamburger{
     display:inline-flex;align-items:center;justify-content:center;
     width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.22);
     background:rgba(255,255,255,.08);cursor:pointer;user-select:none;
   }
-  .hamburger span{
-    display:block;width:18px;height:2px;background:#fff;position:relative;
-  }
+  .hamburger span{display:block;width:18px;height:2px;background:#fff;position:relative;}
   .hamburger span::before,.hamburger span::after{
     content:"";position:absolute;left:0;width:18px;height:2px;background:#fff;
   }
-  .hamburger span::before{top:-6px;}
-  .hamburger span::after{top:6px;}
+  .hamburger span::before{top:-6px;} .hamburger span::after{top:6px;}
 
-  /* Nav vira painel vertical */
-  .nav{display:none;position:absolute;left:0;right:0;top:100%;padding:10px 12px;gap:10px;}
-  .nav.is-open{display:flex;flex-direction:column;align-items:stretch;}
-  .btn-chip{width:100%;justify-content:flex-start;}
-  /* Submenu no mobile: posicionamento estático e largura total */
-  .dropdown{width:100%;}
-  .dropdown-content{position:static;display:none;margin-top:8px;min-width:unset;border-radius:12px;}
-  .dropdown.open > .dropdown-content{display:block;}
+  /* Backdrop */
+  .drawer-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);
+    z-index:100001;opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .drawer-backdrop.show{opacity:1;pointer-events:auto;}
+
+  /* Painel */
+  .drawer{
+    position:fixed;top:0;right:0;height:100vh;width:100vw; /* tela inteira */
+    background:linear-gradient(135deg,var(--brand) 0%,var(--brand-light) 100%);
+    z-index:100002;transform:translateX(100%);transition:transform .25s ease;
+    display:flex;flex-direction:column;padding:14px 16px 18px 16px;
+    overflow:auto;
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer .drawer-header{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;
+  }
+  .drawer .close{
+    width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.08);display:inline-flex;align-items:center;justify-content:center;color:#fff;
+    font-size:20px;line-height:1;cursor:pointer;
+  }
+  .drawer .menu{
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .drawer .btn-chip{width:100%;justify-content:flex-start;}
+  .drawer .dropdown{width:100%;}
+  .drawer .dropdown-content{position:static;display:none;margin-top:8px;min-width:unset;border-radius:12px;}
+  .drawer .dropdown.open > .dropdown-content{display:block;}
 }
 </style>
 
@@ -105,9 +121,9 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
       <img src="https://i.ibb.co/Kp64sjfH/LUPA.png" alt="Logo">
       <div class="header-title">🌐 Conversor de Coordenadas</div>
     </div>
-    <button class="hamburger" aria-label="Abrir menu" title="Menu">
-      <span></span>
-    </button>
+    <button class="hamburger" aria-label="Abrir menu" title="Menu"><span></span></button>
+
+    <!-- nav desktop -->
     <div class="nav" id="topNav">
       <div class="dropdown">
         <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
@@ -123,42 +139,79 @@ section.main > div.block-container{position:relative;z-index:1;padding-top:120px
   </div>
 </div>
 
+<!-- Drawer mobile -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://i.ibb.co/Kp64sjfH/LUPA.png" alt="Logo" style="height:28px;">
+      <strong>Menu</strong>
+    </div>
+    <button class="close" id="drawerClose" aria-label="Fechar">✕</button>
+  </div>
+  <div class="menu">
+    <div class="dropdown">
+      <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
+      <div class="dropdown-content">
+        <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
+        <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
+        <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
+      </div>
+    </div>
+    <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+    <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
+  </div>
+</div>
+
 <script>
-// Toggle do hambúrguer (mobile) + dropdown
+// Desktop dropdown hover/click
 document.addEventListener('click', function(e){
-  const burger = e.target.closest('.hamburger');
-  const nav = document.getElementById('topNav');
   const toggle = e.target.closest('.dropdown-toggle');
-  const openedDropdowns = document.querySelectorAll('.dropdown.open');
-
-  // hamburguer
-  if (burger){
-    e.preventDefault();
-    nav.classList.toggle('is-open');
-    // fecha dropdowns quando fecha o painel
-    if (!nav.classList.contains('is-open')){
-      openedDropdowns.forEach(dd=>dd.classList.remove('open'));
-    }
-    return;
-  }
-
-  // clique fora: fecha painel e dropdowns (apenas em mobile)
-  if (!e.target.closest('.custom-header')){
-    nav?.classList.remove('is-open');
-    openedDropdowns.forEach(dd=>dd.classList.remove('open'));
-    return;
-  }
-
-  // dropdown
+  const opened = document.querySelectorAll('.dropdown.open');
   if (toggle){
     e.preventDefault();
     const parent = toggle.closest('.dropdown');
-    openedDropdowns.forEach(dd=>{ if (dd!==parent) dd.classList.remove('open');});
+    opened.forEach(dd=>{ if(dd!==parent) dd.classList.remove('open'); });
+    parent.classList.toggle('open');
+  } else if (!e.target.closest('.dropdown')){
+    opened.forEach(dd=>dd.classList.remove('open'));
+  }
+});
+
+// Drawer logic (mobile)
+const burger = document.querySelector('.hamburger');
+const drawer = document.getElementById('drawer');
+const backdrop = document.getElementById('drawerBackdrop');
+const closeBtn = document.getElementById('drawerClose');
+
+function openDrawer(){
+  drawer.classList.add('open'); backdrop.classList.add('show');
+  document.documentElement.style.overflow='hidden'; // trava scroll do body
+}
+function closeDrawer(){
+  drawer.classList.remove('open'); backdrop.classList.remove('show');
+  document.documentElement.style.overflow='';
+  // fecha submenus
+  drawer.querySelectorAll('.dropdown.open').forEach(dd=>dd.classList.remove('open'));
+}
+
+burger?.addEventListener('click', (e)=>{ e.preventDefault(); openDrawer(); });
+closeBtn?.addEventListener('click', (e)=>{ e.preventDefault(); closeDrawer(); });
+backdrop?.addEventListener('click', closeDrawer);
+
+// Dropdowns dentro do drawer
+drawer.addEventListener('click', function(e){
+  const toggle = e.target.closest('.dropdown-toggle');
+  if (toggle){
+    e.preventDefault();
+    const parent = toggle.closest('.dropdown');
+    drawer.querySelectorAll('.dropdown.open').forEach(dd=>{ if(dd!==parent) dd.classList.remove('open'); });
     parent.classList.toggle('open');
   }
 });
 </script>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -289,6 +342,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
