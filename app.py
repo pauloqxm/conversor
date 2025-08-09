@@ -6,190 +6,160 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial
 
 # ====================== HEADER + NAV (RESPONSIVO) ======================
 st.markdown(f"""
-    <style>
-    :root {{
-        --brand: #1e8c3a;       /* verde principal */
-        --brand-light: #34c759; /* verde claro */
-        --brand-dark: #0d5c26;  /* verde escuro */
-        --accent: #ffffff;
-        --text: #ffffff;        /* cor fixa do texto */
-        --shadow: 0 10px 30px rgba(0,0,0,0.18);
-        --radius: 14px;
-    }}
+<style>
+:root{
+  --brand:#1e8c3a; --brand-light:#34c759; --brand-dark:#0d5c26;
+  --text:#fff; --shadow:0 10px 30px rgba(0,0,0,.18); --radius:14px;
+}
+[data-testid="stHeader"]{visibility:hidden;}
+section.main > div.block-container{position:relative;z-index:1;padding-top:120px;padding-bottom:16px;}
 
-    [data-testid="stHeader"] {{ visibility: hidden; }}
-    section.main > div.block-container {{
-        position: relative;
-        z-index: 1;
-        padding-top: 120px;
-        padding-bottom: 16px;
-    }}
+.custom-header{
+  position:fixed; inset:0 0 auto 0; width:100%;
+  color:var(--text); padding:10px 20px;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Tahoma,sans-serif;
+  background:linear-gradient(135deg,var(--brand) 0%,var(--brand-light) 100%);
+  border-bottom:1px solid rgba(255,255,255,.15);
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.06), var(--shadow);
+  z-index:100000; -webkit-backdrop-filter:saturate(120%) blur(4px); backdrop-filter:saturate(120%) blur(4px);
+  overflow:visible;
+}
 
-    .custom-header {{
-        position: fixed;
-        inset: 0 0 auto 0;
-        width: 100%;
-        color: var(--text);
-        padding: 10px 20px;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Tahoma, sans-serif;
-        background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
-        border-bottom: 1px solid rgba(255,255,255,.15);
-        box-shadow: inset 0 -1px 0 rgba(255,255,255,.06), var(--shadow);
-        z-index: 100000;
-        -webkit-backdrop-filter: saturate(120%) blur(4px);
-        backdrop-filter: saturate(120%) blur(4px);
-        overflow: visible;
-    }}
+/* TOP BAR */
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.logo-title{display:flex;align-items:center;gap:10px;min-width:0;}
+.logo-title img{height:36px;width:auto;display:block;}
+.header-title{font-size:16px;line-height:1.3;text-shadow:0 1px 0 rgba(0,0,0,.15);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-    .header-top {{
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        font-weight: 700;
-    }}
+/* NAV (desktop) */
+.nav{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;z-index:100001;}
+.btn-chip{
+  color:var(--text)!important;text-decoration:none!important;font-weight:600;
+  padding:10px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  transition:transform .15s ease, background .2s ease, border-color .2s ease; position:relative;
+}
+.btn-chip:hover{transform:translateY(-1px);background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.32);}
 
-    .logo-title {{
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }}
+/* Caret (chevron) com espaçamento */
+.dropdown{position:relative;display:inline-block;}
+.dropdown > a.btn-chip{padding-right:16px;}
+.dropdown > a .caret{
+  display:inline-block;width:10px;height:10px;margin-left:10px;
+  border-right:2px solid #fff;border-bottom:2px solid #fff;
+  transform:translateY(-1px) rotate(45deg);transition:transform .25s ease;opacity:.9;
+}
+.dropdown:hover > a .caret,.dropdown.open > a .caret{transform:translateY(-1px) rotate(-135deg);}
 
-    .logo-title img {{
-        height: 38px;
-        width: auto;
-        display: block;
-    }}
+/* Submenu (desktop) */
+.dropdown-content{
+  display:none;position:absolute;left:0;top:100%;min-width:220px;background:var(--brand-light);
+  border:1px solid rgba(255,255,255,.18);border-radius:var(--radius);padding:8px;margin-top:2px;
+  box-shadow:var(--shadow);z-index:100002;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.dropdown:hover > .dropdown-content,.dropdown.open > .dropdown-content{display:block;}
+.dropdown-content a{
+  color:var(--text)!important;text-decoration:none!important;position:relative;display:flex;align-items:center;gap:10px;
+  padding:12px;border-radius:10px;font-weight:600;transition:background .18s ease, transform .12s ease;
+}
+.dropdown-content a:hover{background:rgba(255,255,255,.16);transform:translateX(2px);}
 
-    .header-title {{
-        font-size: 16px;
-        line-height: 1.4;
-        text-shadow: 0 1px 0 rgba(0,0,0,.15);
-        white-space: nowrap;
-    }}
+/* ===== MOBILE ===== */
+.hamburger{display:none;}
 
-    .nav {{
-        display: flex; justify-content: center; align-items: center;
-        gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
-    }}
+@media (max-width:768px){
+  section.main > div.block-container{padding-top:140px;} /* mais espaço pq o menu pode abrir */
+  .logo-title img{height:28px;}
+  .header-title{font-size:15px;}
 
-    /* Botão tipo "chip" */
-    .btn-chip {{
-        color: var(--text) !important;
-        text-decoration: none !important;
-        font-weight: 600;
-        padding: 10px 16px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.22);
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-        transition: transform .15s ease, background .2s ease, border-color .2s ease;
-        -webkit-tap-highlight-color: transparent;
-        position: relative;
-    }}
-    .btn-chip:hover {{
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.14);
-        border-color: rgba(255,255,255,0.32);
-    }}
+  /* mostra botão hambúrguer e esconde nav padrão */
+  .hamburger{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.08);cursor:pointer;user-select:none;
+  }
+  .hamburger span{
+    display:block;width:18px;height:2px;background:#fff;position:relative;
+  }
+  .hamburger span::before,.hamburger span::after{
+    content:"";position:absolute;left:0;width:18px;height:2px;background:#fff;
+  }
+  .hamburger span::before{top:-6px;}
+  .hamburger span::after{top:6px;}
 
-    .dropdown {{ position: relative; display: inline-block; }}
-    .dropdown > a.btn-chip {{ padding-right: 16px; }}
-    .dropdown > a .caret {{
-        display: inline-block;
-        width: 10px; height: 10px;
-        margin-left: 10px;
-        border-right: 2px solid #fff;
-        border-bottom: 2px solid #fff;
-        transform: translateY(-1px) rotate(45deg);
-        transition: transform .25s ease;
-        opacity: .9;
-    }}
-    .dropdown:hover > a .caret,
-    .dropdown.open > a .caret {{
-        transform: translateY(-1px) rotate(-135deg);
-    }}
+  /* Nav vira painel vertical */
+  .nav{display:none;position:absolute;left:0;right:0;top:100%;padding:10px 12px;gap:10px;}
+  .nav.is-open{display:flex;flex-direction:column;align-items:stretch;}
+  .btn-chip{width:100%;justify-content:flex-start;}
+  /* Submenu no mobile: posicionamento estático e largura total */
+  .dropdown{width:100%;}
+  .dropdown-content{position:static;display:none;margin-top:8px;min-width:unset;border-radius:12px;}
+  .dropdown.open > .dropdown-content{display:block;}
+}
+</style>
 
-    /* Submenu */
-    .dropdown-content {{
-        display: none; position: absolute; left: 0; top: 100%;
-        min-width: 220px; background: var(--brand-light);
-        border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--radius); padding: 8px;
-        margin-top: 2px;
-        box-shadow: var(--shadow); z-index: 100002;
-        -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    }}
-    .dropdown:hover > .dropdown-content {{ display: block; }}
-    .dropdown.open > .dropdown-content {{ display: block; }}
-
-    /* Links do submenu */
-    .dropdown-content a {{
-        color: var(--text) !important;
-        text-decoration: none !important;
-        position: relative;
-        display: flex; align-items: center; gap: 10px;
-        padding: 12px 12px;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: background .18s ease, transform .12s ease;
-    }}
-    .dropdown-content a:hover {{
-        background: rgba(255,255,255,0.16);
-        transform: translateX(2px);
-    }}
-
-    @media (max-width: 768px) {{
-        section.main > div.block-container {{ padding-top: 96px; }}
-        .nav {{ gap: 10px; }}
-        .dropdown-content {{ min-width: 180px; }}
-        .logo-title img {{ height: 32px; }}
-    }}
-    </style>
-
-    <div class="custom-header">
-        <div class="header-top">
-            <div class="logo-title">
-                <img src="https://i.ibb.co/Kp64sjfH/LUPA.png" alt="Logo">
-                <div class="header-title">🌐 Conversor de Coordenadas</div>
-            </div>
-            <div class="nav">
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
-                    <div class="dropdown-content">
-                        <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
-                        <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
-                        <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
-                    </div>
-                </div>
-                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
-                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
-            </div>
-        </div>
+<div class="custom-header">
+  <div class="header-top">
+    <div class="logo-title">
+      <img src="https://i.ibb.co/Kp64sjfH/LUPA.png" alt="Logo">
+      <div class="header-title">🌐 Conversor de Coordenadas</div>
     </div>
+    <button class="hamburger" aria-label="Abrir menu" title="Menu">
+      <span></span>
+    </button>
+    <div class="nav" id="topNav">
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
+        <div class="dropdown-content">
+          <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
+          <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
+          <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
+        </div>
+      </div>
+      <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+      <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
+    </div>
+  </div>
+</div>
 
-    <script>
-    document.addEventListener('click', function (e) {{
-      const toggle = e.target.closest('.dropdown-toggle');
-      const opened = document.querySelectorAll('.dropdown.open');
+<script>
+// Toggle do hambúrguer (mobile) + dropdown
+document.addEventListener('click', function(e){
+  const burger = e.target.closest('.hamburger');
+  const nav = document.getElementById('topNav');
+  const toggle = e.target.closest('.dropdown-toggle');
+  const openedDropdowns = document.querySelectorAll('.dropdown.open');
 
-      if (!toggle && !e.target.closest('.dropdown')) {{
-        opened.forEach(dd => dd.classList.remove('open'));
-        return;
-      }}
-      if (toggle) {{
-        e.preventDefault();
-        const parent = toggle.closest('.dropdown');
-        opened.forEach(dd => {{ if (dd !== parent) dd.classList.remove('open'); }});
-        parent.classList.toggle('open');
-      }}
-    }});
-    </script>
+  // hamburguer
+  if (burger){
+    e.preventDefault();
+    nav.classList.toggle('is-open');
+    // fecha dropdowns quando fecha o painel
+    if (!nav.classList.contains('is-open')){
+      openedDropdowns.forEach(dd=>dd.classList.remove('open'));
+    }
+    return;
+  }
+
+  // clique fora: fecha painel e dropdowns (apenas em mobile)
+  if (!e.target.closest('.custom-header')){
+    nav?.classList.remove('is-open');
+    openedDropdowns.forEach(dd=>dd.classList.remove('open'));
+    return;
+  }
+
+  // dropdown
+  if (toggle){
+    e.preventDefault();
+    const parent = toggle.closest('.dropdown');
+    openedDropdowns.forEach(dd=>{ if (dd!==parent) dd.classList.remove('open');});
+    parent.classList.toggle('open');
+  }
+});
+</script>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -319,6 +289,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
