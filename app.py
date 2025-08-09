@@ -42,6 +42,7 @@ st.markdown(f"""
     .header-title {{ 
         font-size: 14px;
         text-align: center;
+        line-height: 1.4;
     }}
 
     /* Menu centralizado */
@@ -283,6 +284,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
