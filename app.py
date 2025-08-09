@@ -22,7 +22,16 @@ st.markdown(f"""
         padding: 10px 24px;
         font-family: Tahoma, sans-serif;
         border-bottom: 3px solid #fad905;
-        z-index: 9999;
+        z-index: 100000;            /* acima de tudo */
+        overflow: visible;          /* permite o dropdown “sair” do header */
+        pointer-events: auto;       /* garante clique */
+    }}
+
+    /* Em alguns temas o main fica com z-index alto; force abaixo do header */
+    section.main > div.block-container {{
+        position: relative;
+        z-index: 1;
+        padding-top: 110px;         /* altura do header + nav */
     }}
 
     .header-top {{
@@ -52,22 +61,30 @@ st.markdown(f"""
     }}
     .nav a:hover {{ background: rgba(0,0,0,0.1); }}
 
-    /* Dropdown genérico */
+    /* Dropdown controlado por clique */
     .dropdown {{
         position: relative;
         display: inline-block;
     }}
+    .dropdown > a {{
+        cursor: pointer;            /* mostra que é clicável */
+    }}
     .dropdown-content {{
         display: none;
         position: absolute;
+        left: 0;
         background-color: #04a5c9;
-        min-width: 160px;
+        min-width: 180px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         border: 1px solid #038fb0;
         border-radius: 6px;
         padding: 6px 0;
         margin-top: 6px;
-        z-index: 10000;
+        z-index: 100001;            /* acima do header */
+        pointer-events: auto;
+    }}
+    .dropdown.open > .dropdown-content {{
+        display: block;             /* abre ao clicar (classe .open) */
     }}
     .dropdown-content a {{
         color: white;
@@ -75,41 +92,10 @@ st.markdown(f"""
         display: block;
         padding: 8px 12px;
         font-weight: 500;
+        white-space: nowrap;
     }}
     .dropdown-content a:hover {{
         background: rgba(0,0,0,0.12);
-    }}
-    .dropdown:hover .dropdown-content {{ display: block; }}
-
-    /* Espaço do topo para o conteúdo principal */
-    .main .block-container {{
-        padding-top: 110px; /* altura do header + nav */
-    }}
-
-    /* Faixa de controles (widgets) logo abaixo do cabeçalho */
-    .controls-bar {{
-        position: sticky; /* fica colado ao topo ao rolar */
-        top: 60px;        /* abaixo do header fixo */
-        background: #f7fbfd;
-        border-bottom: 1px solid #e1eef3;
-        padding: 8px 12px 4px 12px;
-        z-index: 999;
-        border-radius: 8px;
-    }}
-    .controls-title {{
-        font-size: 13px; font-weight: 700; color: #036581; margin-bottom: 4px;
-    }}
-
-    /* Afinando os widgets do Streamlit para parecer menu */
-    div[data-baseweb="select"] > div {{
-        min-height: 34px;
-        border-radius: 6px;
-    }}
-    .stRadio > label, .stSelectbox > label {{
-        font-size: 13px !important;
-        color: #055b72 !important;
-        font-weight: 700 !important;
-        margin-bottom: 4px;
     }}
     </style>
 
@@ -118,7 +104,7 @@ st.markdown(f"""
             <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#">📸 Vinculadas</a>
+                    <a href="#" class="dropdown-toggle">📸 Vinculadas</a>
                     <div class="dropdown-content">
                         <a href="https://www.cogerh.com.br/" target="_blank">COGERH</a>
                         <a href="https://www.sohidra.ce.gov.br/" target="_blank">SOHIDRA</a>
@@ -130,7 +116,32 @@ st.markdown(f"""
             </div>
         </div>
     </div>
+
+    <script>
+    // Abre/fecha o dropdown no clique e fecha ao clicar fora
+    window.addEventListener('DOMContentLoaded', function() {{
+        const toggles = document.querySelectorAll('.dropdown-toggle');
+        toggles.forEach(function(tg) {{
+            tg.addEventListener('click', function(e) {{
+                e.preventDefault();
+                e.stopPropagation();
+                const parent = this.closest('.dropdown');
+                // Fecha outros abertos
+                document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
+                    if (dd !== parent) dd.classList.remove('open');
+                }});
+                parent.classList.toggle('open');
+            }});
+        }});
+        document.addEventListener('click', function() {{
+            document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
+                dd.classList.remove('open');
+            }});
+        }});
+    }});
+    </script>
 """, unsafe_allow_html=True)
+
 
 # ---------------------- TÍTULO ----------------------
 st.markdown(
@@ -267,4 +278,5 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
