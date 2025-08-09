@@ -12,7 +12,7 @@ st.markdown(f"""
         --brand-light: #34c759; /* verde claro */
         --brand-dark: #0d5c26;  /* verde escuro */
         --accent: #ffffff;
-        --text: #ffffff;
+        --text: #ffffff;        /* cor fixa do texto */
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
         --radius: 14px;
     }}
@@ -51,8 +51,8 @@ st.markdown(f"""
 
     /* Botão tipo "chip" */
     .btn-chip {{
-        color: var(--text);
-        text-decoration: none !important;
+        color: var(--text) !important;       /* cor branca fixa */
+        text-decoration: none !important;    /* remove sublinhado */
         font-weight: 600;
         padding: 10px 16px;
         border-radius: 999px;
@@ -104,10 +104,10 @@ st.markdown(f"""
 
     /* Links do submenu */
     .dropdown-content a {{
-        text-decoration: none !important;
+        color: var(--text) !important;        /* cor branca fixa */
+        text-decoration: none !important;     /* remove sublinhado */
         position: relative;
         display: flex; align-items: center; gap: 10px;
-        color: var(--text);
         padding: 12px 12px;
         border-radius: 10px;
         font-weight: 600;
@@ -163,7 +163,6 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
-
 
 
 # ====================== TÍTULO ======================
@@ -292,6 +291,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
