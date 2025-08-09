@@ -118,11 +118,11 @@ st.markdown(f"""
             <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#">📸 Instagram</a>
+                    <a href="#">📸 Vinculadas</a>
                     <div class="dropdown-content">
-                        <a href="https://www.instagram.com/seuusuario/reels" target="_blank">Reel</a>
-                        <a href="https://www.instagram.com/seuusuario/stories" target="_blank">Store</a> <!-- se preferir: Stories -->
-                        <a href="https://www.instagram.com/seuusuario" target="_blank">Feed</a>
+                        <a href="https://www.cogerh.com.br/" target="_blank">COGERH</a>
+                        <a href="https://www.sohidra.ce.gov.br/" target="_blank">SOHIDRA</a>
+                        <a href="https://www.funceme.br/" target="_blank">FUNCEME</a>
                     </div>
                 </div>
                 <a href="https://www.facebook.com/seuusuario" target="_blank">📘 Facebook</a>
@@ -267,3 +267,4 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
