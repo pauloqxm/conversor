@@ -8,9 +8,9 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial
 st.markdown(f"""
     <style>
     :root {{
-        --brand: #1e8c3a;       /* verde principal */
-        --brand-light: #34c759; /* verde claro */
-        --brand-dark: #0d5c26;  /* verde escuro */
+        --brand: #1e8c3a;
+        --brand-light: #34c759;
+        --brand-dark: #0d5c26;
         --accent: #ffffff;
         --text: #ffffff;
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
@@ -60,16 +60,47 @@ st.markdown(f"""
     }}
     .nav a:hover {{ transform: translateY(-1px); background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); }}
 
+    /* Efeito “loading” na sublinha */
+    .nav a::after {{
+        content: "";
+        position: absolute;
+        left: 12px; right: 12px; bottom: 6px;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(255,255,255,.25) 0%, #ffffff 50%, rgba(255,255,255,.25) 100%);
+        background-size: 200% 100%;
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .25s ease;
+        opacity: .95;
+    }}
+    .nav a:hover::after,
+    .dropdown.open > a::after {{
+        transform: scaleX(1);
+        animation: shimmer 1.2s linear infinite;
+    }}
+    @keyframes shimmer {{
+        0% {{ background-position: 0% 50%; }}
+        100% {{ background-position: 200% 50%; }}
+    }}
+
     .dropdown {{ position: relative; display: inline-block; }}
-    .dropdown > a {{ padding-right: 28px; padding-bottom: 14px; cursor: pointer; }}
+    .dropdown > a {{
+        padding-right: 38px;  /* mais espaço para a seta */
+        padding-bottom: 14px;
+        cursor: pointer;
+    }}
     .dropdown > a .caret {{
-        position: absolute; right: 8px; top: 50%;
+        position: absolute;
+        right: 12px;           /* afasta do texto */
+        top: 50%;
         transform: translateY(-50%) rotate(0deg);
         transition: transform .25s ease;
-        font-size: 12px;
+        font-size: 13px;       /* um pouco maior */
         opacity: 0.9;
         text-shadow: 0 1px 1px rgba(0,0,0,0.25);
         pointer-events: none;
+        line-height: 1;
     }}
 
     /* HOVER (desktop) */
@@ -85,7 +116,7 @@ st.markdown(f"""
         min-width: 220px; background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius); padding: 8px;
-        margin-top: 0px;
+        margin-top: 0px;  /* colado ao botão */
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
@@ -124,6 +155,7 @@ st.markdown(f"""
     </div>
 
     <script>
+    // Delegação de eventos (não quebra com rerun do Streamlit)
     document.addEventListener('click', function (e) {{
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
@@ -141,6 +173,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ====================== TÍTULO ======================
@@ -269,6 +302,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
