@@ -4,7 +4,7 @@ import pyproj
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial_sidebar_state="collapsed")
 
-# ====================== HEADER + NAV (RESPONSIVO c/ HAMBÚRGUER À ESQUERDA) ======================
+# ====================== HEADER + NAV (RESPONSIVO) ======================
 st.markdown(f"""
     <style>
     :root {{
@@ -41,30 +41,12 @@ st.markdown(f"""
         overflow: visible;
     }}
 
-    .header-top {{ 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        gap: 10px; 
-        font-weight: 700; 
-        position: relative;
-    }}
-    .header-title {{ 
-        font-size: 16px; 
-        text-align: center; 
-        line-height: 1.4; 
-        text-shadow: 0 1px 0 rgba(0,0,0,.15); 
-        margin-left: 40px; /* Compensa o espaço do hamburger */
-    }}
+    .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
+    .header-title {{ font-size: 16px; text-align: center; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15); }}
 
     .nav {{
-        display: flex; 
-        justify-content: center; 
-        align-items: center;
-        gap: 16px; 
-        flex-wrap: wrap; 
-        position: relative; 
-        z-index: 100001;
+        display: flex; justify-content: center; align-items: center;
+        gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
 
     /* Botão tipo "chip" */
@@ -109,20 +91,13 @@ st.markdown(f"""
 
     /* Submenu */
     .dropdown-content {{
-        display: none; 
-        position: absolute; 
-        left: 0; 
-        top: 100%;
-        min-width: 220px; 
-        background: var(--brand-light);
+        display: none; position: absolute; left: 0; top: 100%;
+        min-width: 220px; background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--radius); 
-        padding: 8px;
+        border-radius: var(--radius); padding: 8px;
         margin-top: 2px;
-        box-shadow: var(--shadow); 
-        z-index: 100002;
-        -webkit-backdrop-filter: blur(8px); 
-        backdrop-filter: blur(8px);
+        box-shadow: var(--shadow); z-index: 100002;
+        -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
@@ -132,9 +107,7 @@ st.markdown(f"""
         color: var(--text) !important;        /* cor branca fixa */
         text-decoration: none !important;     /* remove sublinhado */
         position: relative;
-        display: flex; 
-        align-items: center; 
-        gap: 10px;
+        display: flex; align-items: center; gap: 10px;
         padding: 12px 12px;
         border-radius: 10px;
         font-weight: 600;
@@ -145,97 +118,19 @@ st.markdown(f"""
         transform: translateX(2px);
     }}
 
-    /* Menu Hamburguer */
-    .hamburger {{
-        display: none;
-        cursor: pointer;
-        padding: 10px;
-        position: absolute;
-        left: 20px;  /* Alterado para esquerda */
-        top: 14px;
-        z-index: 100003;
-    }}
-    
-    .hamburger span {{
-        display: block;
-        width: 25px;
-        height: 3px;
-        background-color: white;
-        margin: 5px 0;
-        transition: all 0.3s ease;
-    }}
-    
-    .hamburger.active span:nth-child(1) {{
-        transform: rotate(45deg) translate(5px, 5px);
-    }}
-    
-    .hamburger.active span:nth-child(2) {{
-        opacity: 0;
-    }}
-    
-    .hamburger.active span:nth-child(3) {{
-        transform: rotate(-45deg) translate(7px, -6px);
-    }}
-
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
-        
-        .hamburger {{
-            display: block;
-        }}
-        
-        .nav {{
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            background: var(--brand-dark);
-            position: absolute;
-            top: 100%;
-            left: 0;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            border-radius: 0 0 var(--radius) var(--radius);
-        }}
-        
-        .nav.active {{
-            display: flex;
-        }}
-        
-        .dropdown-content {{
-            position: static;
-            display: none;
-            width: 100%;
-            box-shadow: none;
-            background: rgba(0,0,0,0.1);
-            margin-top: 10px;
-        }}
-        
-        .dropdown.open > .dropdown-content {{
-            display: block;
-        }}
-        
-        .dropdown > a.btn-chip {{
-            width: 100%;
-            justify-content: space-between;
-        }}
-        
-        .btn-chip {{
-            width: 100%;
-            justify-content: center;
-            margin: 5px 0;
-        }}
+        .nav {{ gap: 10px; }}
+        .dropdown-content {{ min-width: 180px; }}
+        .stButton > button {{ width: 100% !important; }}
+        .block-container div[data-testid="column"] {{ width: 100% !important; flex: 1 1 100% !important; }}
     }}
     </style>
 
     <div class="custom-header">
         <div class="header-top">
-            <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
             <div class="header-title">🌐 Conversor de Coordenadas</div>
-            <div class="nav" id="mobileNav">
+            <div class="nav">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
                     <div class="dropdown-content">
@@ -251,25 +146,7 @@ st.markdown(f"""
     </div>
 
     <script>
-    function toggleMenu() {{
-        const nav = document.getElementById('mobileNav');
-        const hamburger = document.querySelector('.hamburger');
-        nav.classList.toggle('active');
-        hamburger.classList.toggle('active');
-    }}
-
     document.addEventListener('click', function (e) {{
-      // Fecha o menu se clicar fora
-      if (!e.target.closest('.hamburger') && !e.target.closest('.nav')) {{
-        const nav = document.getElementById('mobileNav');
-        const hamburger = document.querySelector('.hamburger');
-        if (nav.classList.contains('active')) {{
-            nav.classList.remove('active');
-            hamburger.classList.remove('active');
-        }}
-      }}
-      
-      // Lógica dos dropdowns
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
 
@@ -414,9 +291,4 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
-
-
-
-
-
 
