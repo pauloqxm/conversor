@@ -56,8 +56,7 @@ st.markdown(f"""
         <div class="header-top">
             <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>            
         </div>
-        <div class="header-date">📅 {data_hoje}</div>
-    </div>
+        
 """, unsafe_allow_html=True)
 
 st.markdown(
@@ -193,4 +192,5 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
