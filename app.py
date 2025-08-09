@@ -20,38 +20,29 @@ st.markdown(f"""
         padding: 10px 24px;
         font-family: Tahoma, sans-serif;
         border-bottom: 3px solid #fad905;
-        z-index: 100000;
+        z-index: 1000;
         overflow: visible;
-        pointer-events: auto;
     }}
 
     section.main > div.block-container {{
-        position: relative;
-        z-index: 1;
         padding-top: 110px;
     }}
 
     .header-top {{
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
+        gap: 16px;
         font-weight: bold;
     }}
 
-    .header-title {{ 
-        font-size: 14px;
-        text-align: center;
-    }}
+    .header-title {{ font-size: 14px; }}
 
-    /* Menu centralizado */
     .nav {{
         display: flex;
-        justify-content: center;
         align-items: center;
         gap: 24px;
-        position: relative;
-        z-index: 100000;
+        margin-top: 6px;
     }}
 
     .nav a, .nav .dropdown > a {{
@@ -65,10 +56,11 @@ st.markdown(f"""
 
     .dropdown {{
         position: relative;
-        display: inline-block;
     }}
     .dropdown > a {{
         cursor: pointer;
+        display: flex;
+        align-items: center;
     }}
     .dropdown-content {{
         display: none;
@@ -81,16 +73,11 @@ st.markdown(f"""
         border-radius: 6px;
         padding: 6px 0;
         margin-top: 6px;
-        z-index: 100001;
-        pointer-events: auto;
-        white-space: nowrap;
+        z-index: 1001;
     }}
 
-    /* Hover e clique */
-    .dropdown:hover > .dropdown-content {{
-        display: block;
-    }}
-    .dropdown.open > .dropdown-content {{
+    .dropdown:hover .dropdown-content,
+    .dropdown.open .dropdown-content {{
         display: block;
     }}
 
@@ -110,7 +97,7 @@ st.markdown(f"""
         <div class="header-top">
             <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
             <div class="nav">
-                <div class="dropdown">
+                <div class="dropdown" id="vinculadas-dropdown">
                     <a href="#" class="dropdown-toggle">📸 Vinculadas</a>
                     <div class="dropdown-content">
                         <a href="https://www.cogerh.com.br/" target="_blank">COGERH</a>
@@ -125,23 +112,20 @@ st.markdown(f"""
     </div>
 
     <script>
-    window.addEventListener('DOMContentLoaded', function() {{
-        const toggles = document.querySelectorAll('.dropdown-toggle');
-        toggles.forEach(function(tg) {{
-            tg.addEventListener('click', function(e) {{
-                e.preventDefault();
-                e.stopPropagation();
-                const parent = this.closest('.dropdown');
-                document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
-                    if (dd !== parent) dd.classList.remove('open');
-                }});
-                parent.classList.toggle('open');
-            }});
+    document.addEventListener('DOMContentLoaded', function() {{
+        const dropdown = document.getElementById('vinculadas-dropdown');
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        
+        toggle.addEventListener('click', function(e) {{
+            e.preventDefault();
+            dropdown.classList.toggle('open');
         }});
-        document.addEventListener('click', function() {{
-            document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
-                dd.classList.remove('open');
-            }});
+        
+        // Fechar ao clicar fora
+        document.addEventListener('click', function(e) {{
+            if (!dropdown.contains(e.target)) {{
+                dropdown.classList.remove('open');
+            }}
         }});
     }});
     </script>
@@ -283,6 +267,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
