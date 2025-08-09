@@ -40,7 +40,7 @@ st.markdown(f"""
         z-index: 100000;
         -webkit-backdrop-filter: saturate(120%) blur(4px);
         backdrop-filter: saturate(120%) blur(4px);
-        overflow: visible; /* importante para não cortar o dropdown */
+        overflow: visible; /* não cortar o dropdown */
     }}
 
     .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
@@ -70,11 +70,11 @@ st.markdown(f"""
         transition: transform .2s ease; font-size: 10px; opacity: .95; pointer-events: none;
     }}
 
-    /* ABRE NO HOVER (desktop) */
+    /* HOVER (desktop) */
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown:hover > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
 
-    /* ABRE NO CLIQUE (mobile) */
+    /* CLIQUE (mobile) */
     .dropdown.open > .dropdown-content {{ display: block; }}
     .dropdown.open > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
 
@@ -82,7 +82,8 @@ st.markdown(f"""
         display: none; position: absolute; left: 0; top: 100%;
         min-width: 220px; background: rgba(252,178,5,0.96);
         border: 1px solid rgba(255,255,255,0.18);
-        border-radius: var(--radius); padding: 8px; margin-top: 6px;
+        border-radius: var(--radius); padding: 8px;
+        margin-top: 2px; /* <-- mais próximo do botão */
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
@@ -121,18 +122,15 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Delegação de eventos: resiliente a reruns do Streamlit
+    // Delegação de eventos para não perder no rerun
     document.addEventListener('click', function (e) {{
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
 
-      // Clique fora fecha tudo
       if (!toggle && !e.target.closest('.dropdown')) {{
         opened.forEach(dd => dd.classList.remove('open'));
         return;
       }}
-
-      // Clique no toggle: alterna o aberto e fecha os demais
       if (toggle) {{
         e.preventDefault();
         const parent = toggle.closest('.dropdown');
@@ -142,6 +140,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ====================== TÍTULO ======================
@@ -270,4 +269,5 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
