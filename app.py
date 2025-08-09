@@ -5,60 +5,6 @@ from io import BytesIO
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 
-# Cabeçalho customizado com colunas
-st.markdown(f"""
-    <style>
-    [data-testid="stHeader"] {{
-        visibility: hidden;
-    }}
-
-    .custom-header {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: #04a5c9;
-        color: white;
-        padding: 10px 32px;
-        font-family: Tahoma, sans-serif;
-        border-bottom: 3px solid #fad905;
-        z-index: 9999;
-    }}
-
-    .header-top {{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: bold;
-    }}
-
-    .header-title {{
-        font-size: 14px;
-        
-    }}
-
-    .header-location {{
-        font-size: 12px;
-    }}
-
-    .header-date {{
-        margin-top: 4px;
-        font-size: 12px;
-    }}
-
-    .main .block-container {{
-        padding-top: 70px;
-        
-    }}
-    </style>
-
-    <div class="custom-header">
-        <div class="header-top">
-            <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>            
-        </div>
-        
-""", unsafe_allow_html=True)
-
 st.markdown(
     "<h1 style='text-align: center;'>📍 Conversor de Coordenadas</h1>"
     "<p style='text-align: center; color: gray;'>Transforme dados entre latitude/longitude, UTM e GMS</p>",
@@ -192,5 +138,3 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
-
-
