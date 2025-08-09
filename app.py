@@ -5,7 +5,6 @@ import pyproj
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial_sidebar_state="collapsed")
 
 # ====================== HEADER + NAV (RESPONSIVO) ======================
-# ====================== HEADER + NAV (RESPONSIVO) ======================
 st.markdown(f"""
     <style>
     :root {{
@@ -50,10 +49,10 @@ st.markdown(f"""
         gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
 
-    /* Botão tipo "chip" (SEM sublinha) */
+    /* Botão tipo "chip" */
     .btn-chip {{
         color: var(--text);
-        text-decoration: none;
+        text-decoration: none !important;
         font-weight: 600;
         padding: 10px 16px;
         border-radius: 999px;
@@ -74,13 +73,11 @@ st.markdown(f"""
     }}
 
     .dropdown {{ position: relative; display: inline-block; }}
-
-    /* Toggle do dropdown com caret CSS e espaço próprio */
     .dropdown > a.btn-chip {{ padding-right: 16px; }}
     .dropdown > a .caret {{
         display: inline-block;
         width: 10px; height: 10px;
-        margin-left: 10px;         /* espaço da seta */
+        margin-left: 10px;
         border-right: 2px solid #fff;
         border-bottom: 2px solid #fff;
         transform: translateY(-1px) rotate(45deg);
@@ -98,38 +95,27 @@ st.markdown(f"""
         min-width: 220px; background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius); padding: 8px;
-        margin-top: 2px; /* colado ao botão */
+        margin-top: 2px;
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
 
-    /* Links do submenu COM “loading” estático (sublinha só no submenu) */
+    /* Links do submenu */
     .dropdown-content a {{
+        text-decoration: none !important;
         position: relative;
         display: flex; align-items: center; gap: 10px;
-        color: var(--text); text-decoration: none;
-        padding: 12px 12px; border-radius: 10px;
-        font-weight: 600; transition: background .18s ease, transform .12s ease;
-    }}
-    .dropdown-content a::after {{
-        content: "";
-        position: absolute;
-        left: 10px; right: 10px; bottom: 6px;
-        height: 2px; background: rgba(255,255,255,.95);
-        border-radius: 2px;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform .25s ease;
-        opacity: .9;
+        color: var(--text);
+        padding: 12px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: background .18s ease, transform .12s ease;
     }}
     .dropdown-content a:hover {{
         background: rgba(255,255,255,0.16);
         transform: translateX(2px);
-    }}
-    .dropdown-content a:hover::after {{
-        transform: scaleX(1);   /* estático, sem animação */
     }}
 
     @media (max-width: 768px) {{
@@ -160,7 +146,6 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Delegação de eventos (resistente a reruns do Streamlit)
     document.addEventListener('click', function (e) {{
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
@@ -178,6 +163,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ====================== TÍTULO ======================
@@ -306,6 +292,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
