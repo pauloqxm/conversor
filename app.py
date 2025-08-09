@@ -7,12 +7,10 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 # ---------------------- HEADER + MENU SUSPENSO ----------------------
 st.markdown(f"""
     <style>
-    /* Esconde o header nativo do Streamlit */
     [data-testid="stHeader"] {{
         visibility: hidden;
     }}
 
-    /* Cabeçalho fixo */
     .custom-header {{
         position: fixed;
         top: 0; left: 0;
@@ -22,16 +20,16 @@ st.markdown(f"""
         padding: 10px 24px;
         font-family: Tahoma, sans-serif;
         border-bottom: 3px solid #fad905;
-        z-index: 100000;            /* acima de tudo */
-        overflow: visible;          /* permite o dropdown “sair” do header */
-        pointer-events: auto;       /* garante clique */
+        z-index: 100000;
+        overflow: visible;              /* permite o submenu “sair” */
+        pointer-events: auto;
     }}
 
-    /* Em alguns temas o main fica com z-index alto; force abaixo do header */
+    /* Garante que o conteúdo não cubra o header */
     section.main > div.block-container {{
         position: relative;
         z-index: 1;
-        padding-top: 110px;         /* altura do header + nav */
+        padding-top: 110px;
     }}
 
     .header-top {{
@@ -44,12 +42,13 @@ st.markdown(f"""
 
     .header-title {{ font-size: 14px; }}
 
-    /* Barra de navegação */
     .nav {{
         display: flex;
         align-items: center;
         gap: 24px;
         margin-top: 6px;
+        position: relative;             /* contexto de empilhamento */
+        z-index: 100000;
     }}
 
     .nav a, .nav .dropdown > a {{
@@ -61,13 +60,12 @@ st.markdown(f"""
     }}
     .nav a:hover {{ background: rgba(0,0,0,0.1); }}
 
-    /* Dropdown controlado por clique */
     .dropdown {{
         position: relative;
         display: inline-block;
     }}
     .dropdown > a {{
-        cursor: pointer;            /* mostra que é clicável */
+        cursor: pointer;
     }}
     .dropdown-content {{
         display: none;
@@ -80,19 +78,27 @@ st.markdown(f"""
         border-radius: 6px;
         padding: 6px 0;
         margin-top: 6px;
-        z-index: 100001;            /* acima do header */
+        z-index: 100001;                /* acima do header */
         pointer-events: auto;
+        white-space: nowrap;
     }}
+
+    /* 1) Abre no HOVER (desktop) */
+    .dropdown:hover > .dropdown-content {{
+        display: block;
+    }}
+
+    /* 2) Também abre no CLIQUE (mobile/sem hover) */
     .dropdown.open > .dropdown-content {{
-        display: block;             /* abre ao clicar (classe .open) */
+        display: block;
     }}
+
     .dropdown-content a {{
         color: white;
         text-decoration: none;
         display: block;
         padding: 8px 12px;
         font-weight: 500;
-        white-space: nowrap;
     }}
     .dropdown-content a:hover {{
         background: rgba(0,0,0,0.12);
@@ -118,7 +124,7 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Abre/fecha o dropdown no clique e fecha ao clicar fora
+    // Suporte a clique (útil no mobile ou se hover falhar)
     window.addEventListener('DOMContentLoaded', function() {{
         const toggles = document.querySelectorAll('.dropdown-toggle');
         toggles.forEach(function(tg) {{
@@ -126,7 +132,6 @@ st.markdown(f"""
                 e.preventDefault();
                 e.stopPropagation();
                 const parent = this.closest('.dropdown');
-                // Fecha outros abertos
                 document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
                     if (dd !== parent) dd.classList.remove('open');
                 }});
@@ -141,6 +146,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ---------------------- TÍTULO ----------------------
@@ -278,5 +284,6 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
