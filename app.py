@@ -83,7 +83,7 @@ st.markdown(f"""
         min-width: 220px; background: rgba(252,178,5,0.96);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius); padding: 8px;
-        margin-top: 15px; /* <-- mais próximo do botão */
+        margin-top: 0px; /* <-- mais próximo do botão */
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
@@ -269,6 +269,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
