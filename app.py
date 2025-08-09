@@ -45,7 +45,6 @@ st.markdown(f"""
         line-height: 1.4;
     }}
 
-    /* Menu centralizado */
     .nav {{
         display: flex;
         justify-content: center;
@@ -61,8 +60,19 @@ st.markdown(f"""
         font-weight: 600;
         padding: 6px 8px;
         border-radius: 4px;
+        position: relative;
     }}
     .nav a:hover {{ background: rgba(0,0,0,0.1); }}
+
+    /* Seta branca para indicar dropdown */
+    .dropdown > a::after {{
+        content: "▼";
+        font-size: 10px;
+        margin-left: 5px;
+        color: white;
+        position: relative;
+        top: -1px;
+    }}
 
     .dropdown {{
         position: relative;
@@ -87,7 +97,6 @@ st.markdown(f"""
         white-space: nowrap;
     }}
 
-    /* Hover e clique */
     .dropdown:hover > .dropdown-content {{
         display: block;
     }}
@@ -109,7 +118,7 @@ st.markdown(f"""
 
     <div class="custom-header">
         <div class="header-top">
-            <div class="header-title">🌐 Conversor de Coordenadas</div>
+            <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
             <div class="nav">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle">📸 Vinculadas</a>
@@ -284,6 +293,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
