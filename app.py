@@ -4,7 +4,7 @@ import pyproj
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial_sidebar_state="collapsed")
 
-# ====================== HEADER + NAV (RESPONSIVO c/ HAMBÚRGUER) ======================
+# ====================== HEADER + NAV (RESPONSIVO c/ HAMBÚRGUER À ESQUERDA) ======================
 st.markdown(f"""
     <style>
     :root {{
@@ -17,12 +17,14 @@ st.markdown(f"""
         --radius: 14px;
     }}
 
+    /* Esconde o header nativo do Streamlit e ajusta o topo do conteúdo */
     [data-testid="stHeader"] {{ visibility: hidden; }}
     section.main > div.block-container {{
         position: relative; z-index: 1;
         padding-top: 120px; padding-bottom: 16px;
     }}
 
+    /* Barra fixa */
     .custom-header {{
         position: fixed; inset: 0 0 auto 0; width: 100%;
         color: var(--text);
@@ -37,15 +39,19 @@ st.markdown(f"""
         overflow: visible;
     }}
 
-    .header-top {{ 
-        display: flex; align-items: center; justify-content: space-between;
-        gap: 12px; font-weight: 700;
+    /* Linha do topo: hambúrguer + título + nav desktop */
+    .header-top {{
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        font-weight: 700;
     }}
     .brand {{
         display: flex; align-items: center; gap: 10px;
         font-size: 16px; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15);
+        flex: 1; /* ocupa espaço para manter alinhamento */
+        margin-left: 8px;
     }}
 
+    /* Navegação desktop */
     .nav {{
         display: flex; justify-content: center; align-items: center;
         gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
@@ -118,13 +124,16 @@ st.markdown(f"""
         position: fixed; inset: 0; background: rgba(0,0,0,.35);
         opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 100002;
     }}
+    /* Painel vindo da ESQUERDA */
     .mobile-panel {{
-        position: fixed; top: 0; right: 0; height: 100vh; width: min(86vw, 360px);
+        position: fixed; top: 0; left: 0;
+        height: 100vh; width: min(86vw, 360px);
         background: linear-gradient(180deg, var(--brand) 0%, var(--brand-dark) 100%);
-        box-shadow: -8px 0 24px rgba(0,0,0,.28); transform: translateX(100%);
+        box-shadow: 8px 0 24px rgba(0,0,0,.28);
+        transform: translateX(-100%);
         transition: transform .25s ease; z-index: 100003; padding: 18px;
         display: flex; flex-direction: column; gap: 12px;
-        border-left: 1px solid rgba(255,255,255,.2);
+        border-right: 1px solid rgba(255,255,255,.2);
     }}
     .mobile-panel .section-title {{
         font-weight: 800; font-size: 14px; letter-spacing: .4px; opacity: .9; margin: 6px 2px 4px;
@@ -134,34 +143,35 @@ st.markdown(f"""
     body.mobile-open .mobile-backdrop {{ opacity: 1; pointer-events: auto; }}
     body.mobile-open .mobile-panel   {{ transform: translateX(0); }}
 
-    /* Ajustes responsivos */
+    /* Responsivo */
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
-        .nav {{ display: none; }}             /* esconde navegação desktop */
+        .nav {{ display: none; }}             /* esconde nav desktop */
         .hamburger {{ display: inline-flex; }}/* mostra botão */
+        .brand {{ margin-left: 8px; }}
     }}
     </style>
 
     <div class="custom-header">
         <div class="header-top">
+            <!-- Hambúrguer no canto esquerdo (mobile) -->
+            <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
+
             <div class="brand">🌐 Conversor de Coordenadas</div>
 
-            <!-- Botão hambúrguer só no mobile -->
-            <button class="hamburger" aria-label="Abrir menu" aria-expanded="false"></button>
-        </div>
-
-        <!-- Navegação desktop (igual a antes) -->
-        <div class="nav">
-            <div class="dropdown">
-                <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
-                <div class="dropdown-content">
-                    <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
-                    <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
-                    <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
+            <!-- Navegação desktop -->
+            <div class="nav">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle btn-chip">📸 Vinculadas <span class="caret"></span></a>
+                    <div class="dropdown-content">
+                        <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
+                        <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
+                        <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
+                    </div>
                 </div>
+                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
+                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
             </div>
-            <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener" class="btn-chip">📘 Facebook</a>
-            <a href="https://wa.me/5588999999999" target="_blank" rel="noopener" class="btn-chip">💬 WhatsApp</a>
         </div>
     </div>
 
@@ -210,13 +220,13 @@ st.markdown(f"""
             if (e.target.matches('a')) closeMenu();
         }});
 
-        // Fecha com Esc
         document.addEventListener('keydown', (e) => {{
             if (e.key === 'Escape') closeMenu();
         }});
     }})();
     </script>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -346,5 +356,6 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
