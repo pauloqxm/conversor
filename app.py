@@ -4,132 +4,199 @@ import pyproj
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 
-# ---------------------- HEADER + MENU SUSPENSO ----------------------
+# ---------------------- HEADER + MENU SUSPENSO (Estilo Moderno) ----------------------
 st.markdown(f"""
     <style>
+    /* ================== Tokens de tema ================== */
+    :root {{
+        --brand: #04a5c9;
+        --brand-2: #08b9dd;
+        --brand-3: #027ea0;
+        --accent: #fad905;
+        --text: #ffffff;
+        --shadow: 0 10px 30px rgba(0,0,0,0.18);
+        --radius: 14px;
+    }}
+
     /* Esconde o header nativo do Streamlit */
     [data-testid="stHeader"] {{
         visibility: hidden;
     }}
 
-    /* Cabeçalho fixo */
+    /* ================== HEADER ================== */
     .custom-header {{
         position: fixed;
-        top: 0; left: 0;
+        inset: 0 0 auto 0;         /* top:0; left:0; right:0 */
         width: 100%;
-        background-color: #04a5c9;
-        color: white;
-        padding: 10px 24px;
-        font-family: Tahoma, sans-serif;
-        border-bottom: 3px solid #fad905;
+        color: var(--text);
+        padding: 14px 28px;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Tahoma, sans-serif;
+        background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+        border-bottom: 1px solid rgba(255,255,255,.15);
+        box-shadow: inset 0 -1px 0 rgba(255,255,255,.06), var(--shadow);
         z-index: 100000;
-        overflow: visible;         /* deixa o submenu sair do header */
-        pointer-events: auto;
+        overflow: visible;
+        -webkit-backdrop-filter: saturate(120%) blur(4px);
+        backdrop-filter: saturate(120%) blur(4px);
     }}
 
-    /* Garante espaço para o conteúdo abaixo do header */
+    /* Espaço pro conteúdo */
     section.main > div.block-container {{
         position: relative;
         z-index: 1;
-        padding-top: 100px;        /* ajuste se seu header ficar maior/menor */
+        padding-top: 120px; /* ajuste fino se necessário */
     }}
 
-    /* Título + menu centralizados */
+    /* ================== Layout topo ================== */
     .header-top {{
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
-        font-weight: bold;
+        gap: 10px;
+        font-weight: 700;
     }}
 
     .header-title {{
-        font-size: 14px;
+        font-size: 15px;
+        letter-spacing: .2px;
         text-align: center;
         line-height: 1.4;
+        text-shadow: 0 1px 0 rgba(0,0,0,.15);
     }}
 
-    /* Barra de navegação centralizada */
+    /* ================== NAV ================== */
     .nav {{
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 24px;
+        gap: 16px;
+        flex-wrap: wrap;
         position: relative;
         z-index: 100000;
     }}
+
+    /* Link base (pílula) */
     .nav a, .nav .dropdown > a {{
-        color: white;
+        color: var(--text);
         text-decoration: none;
         font-weight: 600;
-        padding: 6px 8px;
-        border-radius: 4px;
+        padding: 8px 12px;
+        border-radius: 999px;
         position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        transition: transform .15s ease, background .2s ease, border-color .2s ease;
     }}
-    .nav a:hover {{ background: rgba(0,0,0,0.1); }}
+    .nav a:hover {{
+        transform: translateY(-1px);
+        background: rgba(255,255,255,0.10);
+        border-color: rgba(255,255,255,0.24);
+    }}
 
-    /* Dropdown */
+    /* Sub-linha animada (underline reveal) */
+    .nav a::after {{
+        content: "";
+        position: absolute;
+        left: 10px; right: 10px; bottom: 6px;
+        height: 2px;
+        background: var(--accent);
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .25s ease;
+        opacity: .9;
+    }}
+    .nav a:hover::after {{
+        transform: scaleX(1);
+    }}
+
+    /* ================== DROPDOWN ================== */
     .dropdown {{
         position: relative;
         display: inline-block;
     }}
     .dropdown > a {{
         cursor: pointer;
-        padding-bottom: 12px;     /* mais área e encosta no submenu (anti-gap) */
+        padding-right: 30px;      /* espaço pra seta */
+        padding-bottom: 14px;     /* aumenta área e encosta no submenu (anti-gap) */
     }}
 
-    /* Seta branca indicando que é suspenso */
-    .dropdown > a::after {{
-        content: "▼";
+    /* Seta (caret) que gira ao abrir */
+    .dropdown > a .caret {{
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+        transition: transform .2s ease;
         font-size: 10px;
-        margin-left: 6px;
-        color: white;
-        position: relative;
-        top: -1px;
+        opacity: .95;
+        pointer-events: none;
+    }}
+    .dropdown:hover > a .caret,
+    .dropdown.open > a .caret {{
+        transform: translateY(-50%) rotate(180deg);
     }}
 
-    /* Submenu: encostado no botão, sem gap */
+    /* Conteúdo do dropdown com glass + sem “gap” */
     .dropdown-content {{
         display: none;
         position: absolute;
         left: 0;
-        top: 120%;                /* cola no gatilho */
-        background-color: #04a5c9;
-        min-width: 180px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        border: 1px solid #038fb0;
-        border-radius: 6px;
-        padding: 6px 0;
+        top: 100%;  /* cola no gatilho */
+        min-width: 220px;
+        background: rgba(3, 133, 164, 0.92);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: var(--radius);
+        padding: 8px;
+        margin-top: 6px; /* sombra suave sem criar vão real */
+        box-shadow: var(--shadow);
         z-index: 100001;
         pointer-events: auto;
-        white-space: nowrap;
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
     }}
 
-    /* “Ponte” anti-gap: mantém hover ao descer o mouse */
+    /* Ponte anti-gap para manter o hover ao descer o mouse */
     .dropdown-content::before {{
         content: "";
         position: absolute;
-        top: -10px;              /* sobe 10px acima do submenu */
+        top: -12px;
         left: 0;
         right: 0;
-        height: 10px;            /* espessura da ponte */
+        height: 12px;
         background: transparent;
     }}
 
-    /* Abre no hover (desktop) */
+    /* Abre por hover (desktop) e por clique (mobile/fallback) */
     .dropdown:hover > .dropdown-content {{ display: block; }}
-    /* Abre no clique (mobile/apoio) */
     .dropdown.open > .dropdown-content {{ display: block; }}
 
+    /* Itens do submenu */
     .dropdown-content a {{
-        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
         text-decoration: none;
-        display: block;
-        padding: 8px 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
         font-weight: 500;
+        transition: background .18s ease, transform .12s ease;
+        position: relative;
     }}
     .dropdown-content a:hover {{
-        background: rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.10);
+        transform: translateX(2px);
+    }}
+
+    /* ================== Responsivo ================== */
+    @media (max-width: 720px) {{
+        .header-title {{ font-size: 14px; }}
+        .nav {{ gap: 10px; }}
+        .dropdown-content {{ min-width: 180px; }}
     }}
     </style>
 
@@ -138,11 +205,14 @@ st.markdown(f"""
             <div class="header-title">🌐 Conversor de Coordenadas</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle">📸 Vinculadas</a>
+                    <a href="#" class="dropdown-toggle">
+                        📸 Vinculadas
+                        <span class="caret">▾</span>
+                    </a>
                     <div class="dropdown-content">
-                        <a href="https://www.cogerh.com.br/" target="_blank">COGERH</a>
-                        <a href="https://www.sohidra.ce.gov.br/" target="_blank">SOHIDRA</a>
-                        <a href="https://www.funceme.br/" target="_blank">FUNCEME</a>
+                        <a href="https://www.cogerh.com.br/" target="_blank">🏢 COGERH</a>
+                        <a href="https://www.sohidra.ce.gov.br/" target="_blank">💧 SOHIDRA</a>
+                        <a href="https://www.funceme.br/" target="_blank">🌦️ FUNCEME</a>
                     </div>
                 </div>
                 <a href="https://www.facebook.com/seuusuario" target="_blank">📘 Facebook</a>
@@ -152,7 +222,7 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Suporte a clique: útil no mobile e como fallback ao hover
+    // Clique como fallback ao hover (mobile/desktop)
     window.addEventListener('DOMContentLoaded', function() {{
         const toggles = document.querySelectorAll('.dropdown-toggle');
         toggles.forEach(function(tg) {{
@@ -174,6 +244,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 
 # ---------------------- TÍTULO ----------------------
@@ -312,6 +383,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
