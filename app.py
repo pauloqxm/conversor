@@ -16,6 +16,8 @@ st.markdown(f"""
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
         --radius: 14px;
     }}
+
+    /* Some o header nativo e dá espaço pro fixo */
     [data-testid="stHeader"] {{ visibility: hidden; }}
     section.main > div.block-container {{
         position: relative;
@@ -23,6 +25,8 @@ st.markdown(f"""
         padding-top: 120px;
         padding-bottom: 16px;
     }}
+
+    /* HEADER FIXO */
     .custom-header {{
         position: fixed;
         inset: 0 0 auto 0;
@@ -36,129 +40,109 @@ st.markdown(f"""
         z-index: 100000;
         -webkit-backdrop-filter: saturate(120%) blur(4px);
         backdrop-filter: saturate(120%) blur(4px);
+        overflow: visible; /* importante para não cortar o dropdown */
     }}
-    .header-top {{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-    }}
-    .header-title {{
-        font-size: 16px;
-        text-align: center;
-        line-height: 1.4;
-        text-shadow: 0 1px 0 rgba(0,0,0,.15);
-    }}
+
+    .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
+    .header-title {{ font-size: 16px; text-align: center; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,.15); }}
+
     .nav {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-        position: relative;
-        z-index: 100001;
+        display: flex; justify-content: center; align-items: center;
+        gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
+
     .nav a, .nav .dropdown > a {{
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 600;
-        padding: 10px 14px;
-        border-radius: 999px;
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        color: var(--text); text-decoration: none; font-weight: 600;
+        padding: 10px 14px; border-radius: 999px; position: relative;
+        display: inline-flex; align-items: center; gap: 6px;
         background: rgba(255,255,255,0.08);
         border: 1px solid rgba(255,255,255,0.18);
         transition: transform .15s ease, background .2s ease, border-color .2s ease;
+        -webkit-tap-highlight-color: transparent;
     }}
-    .nav a:hover {{
-        transform: translateY(-1px);
-        background: rgba(255,255,255,0.14);
-        border-color: rgba(255,255,255,0.28);
-    }}
+    .nav a:hover {{ transform: translateY(-1px); background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); }}
+
     .dropdown {{ position: relative; display: inline-block; }}
+    .dropdown > a {{ padding-right: 30px; padding-bottom: 14px; cursor: pointer; }}
     .dropdown > a .caret {{
-        position: absolute;
-        right: 10px;
-        top: 50%;
+        position: absolute; right: 10px; top: 50%;
         transform: translateY(-50%) rotate(0deg);
-        transition: transform .2s ease;
+        transition: transform .2s ease; font-size: 10px; opacity: .95; pointer-events: none;
     }}
-    .dropdown.open > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
-    .dropdown-content {{
-        display: none;
-        position: absolute;
-        left: 0;
-        top: 100%;
-        min-width: 220px;
-        background: rgba(252, 178, 5, 0.96);
-        border-radius: var(--radius);
-        padding: 8px;
-        margin-top: 6px;
-        box-shadow: var(--shadow);
-        z-index: 100002;
-    }}
+
+    /* ABRE NO HOVER (desktop) */
+    .dropdown:hover > .dropdown-content {{ display: block; }}
+    .dropdown:hover > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
+
+    /* ABRE NO CLIQUE (mobile) */
     .dropdown.open > .dropdown-content {{ display: block; }}
-    .controls-bar {{
-        border: 1px solid #eee;
-        background: #fffdf4;
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 12px;
+    .dropdown.open > a .caret {{ transform: translateY(-50%) rotate(180deg); }}
+
+    .dropdown-content {{
+        display: none; position: absolute; left: 0; top: 100%;
+        min-width: 220px; background: rgba(252,178,5,0.96);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: var(--radius); padding: 8px; margin-top: 6px;
+        box-shadow: var(--shadow); z-index: 100002;
+        -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
-    .controls-title {{ font-weight: 700; margin-bottom: 10px; }}
+    .dropdown-content a {{
+        display: flex; align-items: center; gap: 10px; color: var(--text);
+        text-decoration: none; padding: 12px 12px; border-radius: 10px;
+        font-weight: 600; transition: background .18s ease, transform .12s ease;
+    }}
+    .dropdown-content a:hover {{ background: rgba(255,255,255,0.16); transform: translateX(2px); }}
+
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
         .nav {{ gap: 10px; }}
         .dropdown-content {{ min-width: 180px; }}
         .stButton > button {{ width: 100% !important; }}
-        .block-container div[data-testid="column"] {{
-            width: 100% !important;
-            flex: 1 1 100% !important;
-        }}
+        .block-container div[data-testid="column"] {{ width: 100% !important; flex: 1 1 100% !important; }}
     }}
     </style>
+
     <div class="custom-header">
         <div class="header-top">
             <div class="header-title">🌐 Conversor de Coordenadas</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle">
-                        📸 Vinculadas
-                        <span class="caret">▾</span>
-                    </a>
+                    <a href="#" class="dropdown-toggle">📸 Vinculadas <span class="caret">▾</span></a>
                     <div class="dropdown-content">
-                        <a href="https://www.cogerh.com.br/" target="_blank">🏢 COGERH</a>
-                        <a href="https://www.sohidra.ce.gov.br/" target="_blank">💧 SOHIDRA</a>
-                        <a href="https://www.funceme.br/" target="_blank">🌦️ FUNCEME</a>
+                        <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
+                        <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
+                        <a href="https://www.funceme.br/" target="_blank" rel="noopener">🌦️ FUNCEME</a>
                     </div>
                 </div>
-                <a href="https://www.facebook.com/seuusuario" target="_blank">📘 Facebook</a>
-                <a href="https://wa.me/5588999999999" target="_blank">💬 WhatsApp</a>
+                <a href="https://www.facebook.com/seuusuario" target="_blank" rel="noopener">📘 Facebook</a>
+                <a href="https://wa.me/5588999999999" target="_blank" rel="noopener">💬 WhatsApp</a>
             </div>
         </div>
     </div>
+
     <script>
-    window.addEventListener('DOMContentLoaded', function() {{
-        const toggles = document.querySelectorAll('.dropdown-toggle');
-        toggles.forEach(function(tg) {{
-            tg.addEventListener('click', function(e) {{
-                e.preventDefault();
-                const parent = this.closest('.dropdown');
-                document.querySelectorAll('.dropdown.open').forEach(function(dd) {{
-                    if (dd !== parent) dd.classList.remove('open');
-                }});
-                parent.classList.toggle('open');
-            }});
-        }});
-        document.addEventListener('click', function() {{
-            document.querySelectorAll('.dropdown.open').forEach(function(dd) {{ dd.classList.remove('open'); }});
-        }});
+    // Delegação de eventos: resiliente a reruns do Streamlit
+    document.addEventListener('click', function (e) {{
+      const toggle = e.target.closest('.dropdown-toggle');
+      const opened = document.querySelectorAll('.dropdown.open');
+
+      // Clique fora fecha tudo
+      if (!toggle && !e.target.closest('.dropdown')) {{
+        opened.forEach(dd => dd.classList.remove('open'));
+        return;
+      }}
+
+      // Clique no toggle: alterna o aberto e fecha os demais
+      if (toggle) {{
+        e.preventDefault();
+        const parent = toggle.closest('.dropdown');
+        opened.forEach(dd => {{ if (dd !== parent) dd.classList.remove('open'); }});
+        parent.classList.toggle('open');
+      }}
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 # ====================== TÍTULO ======================
 st.markdown(
@@ -286,3 +270,4 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
