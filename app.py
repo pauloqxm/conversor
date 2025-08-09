@@ -5,6 +5,7 @@ import pyproj
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial_sidebar_state="collapsed")
 
 # ====================== HEADER + NAV (RESPONSIVO) ======================
+# ====================== HEADER + NAV (RESPONSIVO) ======================
 st.markdown(f"""
     <style>
     :root {{
@@ -49,7 +50,7 @@ st.markdown(f"""
         gap: 16px; flex-wrap: wrap; position: relative; z-index: 100001;
     }}
 
-    /* ===== Modelo de botão tipo "chip" ===== */
+    /* Botão tipo "chip" (SEM sublinha) */
     .btn-chip {{
         color: var(--text);
         text-decoration: none;
@@ -64,6 +65,7 @@ st.markdown(f"""
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
         transition: transform .15s ease, background .2s ease, border-color .2s ease;
         -webkit-tap-highlight-color: transparent;
+        position: relative;
     }}
     .btn-chip:hover {{
         transform: translateY(-1px);
@@ -71,40 +73,18 @@ st.markdown(f"""
         border-color: rgba(255,255,255,0.32);
     }}
 
-    /* Sublinha estática no hover (sem animação) */
-    .btn-chip::after {{
-        content: "";
-        position: absolute;
-        left: 12px; right: 12px; bottom: 6px;
-        height: 2px; background: rgba(255,255,255,.95);
-        border-radius: 2px;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform .25s ease;
-        opacity: .9;
-    }}
-    .btn-chip:hover::after,
-    .dropdown.open > a.btn-chip::after {{
-        transform: scaleX(1);   /* aparece, mas sem shimmer */
-    }}
-
     .dropdown {{ position: relative; display: inline-block; }}
 
-    /* Toggle do dropdown usando o mesmo "chip" + caret CSS */
-    .dropdown > a.btn-chip {{
-        position: relative;
-        padding-right: 16px; /* padding normal, sem truques */
-    }}
-
-    /* Chevron feito em CSS, com espaço próprio */
+    /* Toggle do dropdown com caret CSS e espaço próprio */
+    .dropdown > a.btn-chip {{ padding-right: 16px; }}
     .dropdown > a .caret {{
         display: inline-block;
         width: 10px; height: 10px;
-        margin-left: 10px;        /* <<< espaço da seta em relação ao texto */
+        margin-left: 10px;         /* espaço da seta */
         border-right: 2px solid #fff;
         border-bottom: 2px solid #fff;
         transform: translateY(-1px) rotate(45deg);
-        transition: transform .25s ease, margin-left .15s ease;
+        transition: transform .25s ease;
         opacity: .9;
     }}
     .dropdown:hover > a .caret,
@@ -112,7 +92,7 @@ st.markdown(f"""
         transform: translateY(-1px) rotate(-135deg);
     }}
 
-    /* HOVER (desktop) e CLIQUE (mobile) */
+    /* Submenu */
     .dropdown-content {{
         display: none; position: absolute; left: 0; top: 100%;
         min-width: 220px; background: var(--brand-light);
@@ -125,12 +105,32 @@ st.markdown(f"""
     .dropdown:hover > .dropdown-content {{ display: block; }}
     .dropdown.open > .dropdown-content {{ display: block; }}
 
+    /* Links do submenu COM “loading” estático (sublinha só no submenu) */
     .dropdown-content a {{
-        display: flex; align-items: center; gap: 10px; color: var(--text);
-        text-decoration: none; padding: 12px 12px; border-radius: 10px;
+        position: relative;
+        display: flex; align-items: center; gap: 10px;
+        color: var(--text); text-decoration: none;
+        padding: 12px 12px; border-radius: 10px;
         font-weight: 600; transition: background .18s ease, transform .12s ease;
     }}
-    .dropdown-content a:hover {{ background: rgba(255,255,255,0.16); transform: translateX(2px); }}
+    .dropdown-content a::after {{
+        content: "";
+        position: absolute;
+        left: 10px; right: 10px; bottom: 6px;
+        height: 2px; background: rgba(255,255,255,.95);
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .25s ease;
+        opacity: .9;
+    }}
+    .dropdown-content a:hover {{
+        background: rgba(255,255,255,0.16);
+        transform: translateX(2px);
+    }}
+    .dropdown-content a:hover::after {{
+        transform: scaleX(1);   /* estático, sem animação */
+    }}
 
     @media (max-width: 768px) {{
         section.main > div.block-container {{ padding-top: 96px; }}
@@ -178,6 +178,7 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
+
 
 # ====================== TÍTULO ======================
 st.markdown(
@@ -305,6 +306,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
