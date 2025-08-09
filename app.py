@@ -93,7 +93,7 @@ st.markdown(f"""
         display: none;
         position: absolute;
         left: 0;
-        top: 100%;                /* cola no gatilho */
+        top: 95%;                /* cola no gatilho */
         background-color: #04a5c9;
         min-width: 180px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -312,6 +312,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
