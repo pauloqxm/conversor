@@ -8,16 +8,15 @@ st.set_page_config(page_title="Conversor de Coordenadas", layout="wide", initial
 st.markdown(f"""
     <style>
     :root {{
-        --brand: #fcb205;
-        --brand-light: #ffd84f;
-        --brand-dark: #c98b00;
+        --brand: #1e8c3a;       /* verde principal */
+        --brand-light: #34c759; /* verde claro */
+        --brand-dark: #0d5c26;  /* verde escuro */
         --accent: #ffffff;
         --text: #ffffff;
         --shadow: 0 10px 30px rgba(0,0,0,0.18);
         --radius: 14px;
     }}
 
-    /* Some o header nativo e dá espaço pro fixo */
     [data-testid="stHeader"] {{ visibility: hidden; }}
     section.main > div.block-container {{
         position: relative;
@@ -26,7 +25,6 @@ st.markdown(f"""
         padding-bottom: 16px;
     }}
 
-    /* HEADER FIXO */
     .custom-header {{
         position: fixed;
         inset: 0 0 auto 0;
@@ -40,7 +38,7 @@ st.markdown(f"""
         z-index: 100000;
         -webkit-backdrop-filter: saturate(120%) blur(4px);
         backdrop-filter: saturate(120%) blur(4px);
-        overflow: visible; /* não cortar o dropdown */
+        overflow: visible;
     }}
 
     .header-top {{ display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 700; }}
@@ -63,11 +61,15 @@ st.markdown(f"""
     .nav a:hover {{ transform: translateY(-1px); background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); }}
 
     .dropdown {{ position: relative; display: inline-block; }}
-    .dropdown > a {{ padding-right: 30px; padding-bottom: 14px; cursor: pointer; }}
+    .dropdown > a {{ padding-right: 28px; padding-bottom: 14px; cursor: pointer; }}
     .dropdown > a .caret {{
-        position: absolute; right: 10px; top: 50%;
+        position: absolute; right: 8px; top: 50%;
         transform: translateY(-50%) rotate(0deg);
-        transition: transform .2s ease; font-size: 10px; opacity: .95; pointer-events: none;
+        transition: transform .25s ease;
+        font-size: 12px;
+        opacity: 0.9;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+        pointer-events: none;
     }}
 
     /* HOVER (desktop) */
@@ -80,10 +82,10 @@ st.markdown(f"""
 
     .dropdown-content {{
         display: none; position: absolute; left: 0; top: 100%;
-        min-width: 220px; background: rgba(252,178,5,0.96);
+        min-width: 220px; background: var(--brand-light);
         border: 1px solid rgba(255,255,255,0.18);
         border-radius: var(--radius); padding: 8px;
-        margin-top: 0px; /* <-- mais próximo do botão */
+        margin-top: 0px;
         box-shadow: var(--shadow); z-index: 100002;
         -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     }}
@@ -108,7 +110,7 @@ st.markdown(f"""
             <div class="header-title">🌐 Conversor de Coordenadas</div>
             <div class="nav">
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle">📸 Vinculadas <span class="caret">▾</span></a>
+                    <a href="#" class="dropdown-toggle">📸 Vinculadas <span class="caret">▼</span></a>
                     <div class="dropdown-content">
                         <a href="https://www.cogerh.com.br/" target="_blank" rel="noopener">🏢 COGERH</a>
                         <a href="https://www.sohidra.ce.gov.br/" target="_blank" rel="noopener">💧 SOHIDRA</a>
@@ -122,7 +124,6 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Delegação de eventos para não perder no rerun
     document.addEventListener('click', function (e) {{
       const toggle = e.target.closest('.dropdown-toggle');
       const opened = document.querySelectorAll('.dropdown.open');
@@ -140,7 +141,6 @@ st.markdown(f"""
     }});
     </script>
 """, unsafe_allow_html=True)
-
 
 
 # ====================== TÍTULO ======================
@@ -269,6 +269,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
