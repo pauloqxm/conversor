@@ -1,27 +1,163 @@
 import streamlit as st
 import pandas as pd
 import pyproj
-from io import BytesIO
 
 st.set_page_config(page_title="Conversor de Coordenadas", layout="wide")
 
+# ---------------------- HEADER + MENU SUSPENSO ----------------------
+st.markdown(f"""
+    <style>
+    /* Esconde o header nativo do Streamlit */
+    [data-testid="stHeader"] {{
+        visibility: hidden;
+    }}
+
+    /* Cabeçalho fixo */
+    .custom-header {{
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%;
+        background-color: #04a5c9;
+        color: white;
+        padding: 10px 24px;
+        font-family: Tahoma, sans-serif;
+        border-bottom: 3px solid #fad905;
+        z-index: 9999;
+    }}
+
+    .header-top {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        font-weight: bold;
+    }}
+
+    .header-title {{ font-size: 14px; }}
+
+    /* Barra de navegação */
+    .nav {{
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 6px;
+    }}
+
+    .nav a, .nav .dropdown > a {{
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 6px 8px;
+        border-radius: 4px;
+    }}
+    .nav a:hover {{ background: rgba(0,0,0,0.1); }}
+
+    /* Dropdown genérico */
+    .dropdown {{
+        position: relative;
+        display: inline-block;
+    }}
+    .dropdown-content {{
+        display: none;
+        position: absolute;
+        background-color: #04a5c9;
+        min-width: 160px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border: 1px solid #038fb0;
+        border-radius: 6px;
+        padding: 6px 0;
+        margin-top: 6px;
+        z-index: 10000;
+    }}
+    .dropdown-content a {{
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 8px 12px;
+        font-weight: 500;
+    }}
+    .dropdown-content a:hover {{
+        background: rgba(0,0,0,0.12);
+    }}
+    .dropdown:hover .dropdown-content {{ display: block; }}
+
+    /* Espaço do topo para o conteúdo principal */
+    .main .block-container {{
+        padding-top: 110px; /* altura do header + nav */
+    }}
+
+    /* Faixa de controles (widgets) logo abaixo do cabeçalho */
+    .controls-bar {{
+        position: sticky; /* fica colado ao topo ao rolar */
+        top: 60px;        /* abaixo do header fixo */
+        background: #f7fbfd;
+        border-bottom: 1px solid #e1eef3;
+        padding: 8px 12px 4px 12px;
+        z-index: 999;
+        border-radius: 8px;
+    }}
+    .controls-title {{
+        font-size: 13px; font-weight: 700; color: #036581; margin-bottom: 4px;
+    }}
+
+    /* Afinando os widgets do Streamlit para parecer menu */
+    div[data-baseweb="select"] > div {{
+        min-height: 34px;
+        border-radius: 6px;
+    }}
+    .stRadio > label, .stSelectbox > label {{
+        font-size: 13px !important;
+        color: #055b72 !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px;
+    }}
+    </style>
+
+    <div class="custom-header">
+        <div class="header-top">
+            <div class="header-title">🔎 Você Fiscaliza | Quixeramobim - Ceará</div>
+            <div class="nav">
+                <div class="dropdown">
+                    <a href="#">📸 Instagram</a>
+                    <div class="dropdown-content">
+                        <a href="https://www.instagram.com/seuusuario/reels" target="_blank">Reel</a>
+                        <a href="https://www.instagram.com/seuusuario/stories" target="_blank">Store</a> <!-- se preferir: Stories -->
+                        <a href="https://www.instagram.com/seuusuario" target="_blank">Feed</a>
+                    </div>
+                </div>
+                <a href="https://www.facebook.com/seuusuario" target="_blank">📘 Facebook</a>
+                <a href="https://wa.me/5588999999999" target="_blank">💬 WhatsApp</a>
+            </div>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+# ---------------------- TÍTULO ----------------------
 st.markdown(
     "<h1 style='text-align: center;'>📍 Conversor de Coordenadas</h1>"
     "<p style='text-align: center; color: gray;'>Transforme dados entre latitude/longitude, UTM e GMS</p>",
     unsafe_allow_html=True
 )
 
-with st.sidebar:
-    st.image("https://img.icons8.com/emoji/96/compass-emoji.png", width=64)
-    st.header("⚙️ Opções")
-    modo = st.radio("Modo de Conversão:", ["📁 Arquivo CSV", "⌨️ Entrada Manual"])
-    opcao = st.radio("Tipo de Conversão:", [
-        "🌍 Geográficas → UTM",
-        "📐 UTM → Geográficas",
-        "🧭 GMS → Geográficas"
-    ])
-    st.markdown("---")
+# ---------------------- CONTROLES (SUBSTITUINDO O SIDEBAR) ----------------------
+with st.container():
+    st.markdown('<div class="controls-bar">', unsafe_allow_html=True)
+    st.markdown('<div class="controls-title">⚙️ Opções</div>', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1.1, 1.2, 2.2])
 
+    with c1:
+        modo = st.selectbox("Modo de Conversão", ["📁 Arquivo CSV", "⌨️ Entrada Manual"], index=0)
+    with c2:
+        opcao = st.selectbox("Tipo de Conversão", [
+            "🌍 Geográficas → UTM",
+            "📐 UTM → Geográficas",
+            "🧭 GMS → Geográficas"
+        ], index=0)
+    with c3:
+        st.caption("Use os menus para escolher como quer converter. O resultado aparece abaixo.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------------- LÓGICA PRINCIPAL ----------------------
 if modo == "📁 Arquivo CSV":
     st.markdown("### 📄 Envie seu arquivo CSV")
     uploaded_file = st.file_uploader("Escolha um arquivo com os nomes de colunas adequados", type="csv", key="upload_csv_unico")
@@ -60,27 +196,23 @@ if modo == "📁 Arquivo CSV":
                     proj_geo = pyproj.Transformer.from_crs("epsg:32724", "epsg:4326", always_xy=True)
                     lon, lat = proj_geo.transform(df['UTM_E'].values, df['UTM_N'].values)
                     df['longitude'] = [round(lon_, 6) for lon_ in lon]
-                    df['latitude'] = [round(lat_, 6) for lat_ in lat]
+                    df['latitude']  = [round(lat_, 6) for lat_ in lat]
                     st.dataframe(df[['latitude', 'longitude', 'UTM_E', 'UTM_N']])
                     st.map(df[['latitude', 'longitude']].dropna())
                     csv = df.to_csv(index=False).encode("utf-8")
                     st.download_button("📥 Baixar arquivo convertido", csv, "convertido.csv", "text/csv")
 
             elif opcao == "🧭 GMS → Geográficas":
-                if all(col in df.columns for col in ['lat_grau', 'lat_min', 'lat_seg', 'lat_dir',
-                                                     'lon_grau', 'lon_min', 'lon_seg', 'lon_dir']):
+                need = ['lat_grau','lat_min','lat_seg','lat_dir','lon_grau','lon_min','lon_seg','lon_dir']
+                if all(col in df.columns for col in need):
                     def gms_to_decimal(grau, minuto, segundo, direcao):
                         decimal = grau + minuto / 60 + segundo / 3600
-                        if direcao in ['S', 'W']:
-                            decimal *= -1
+                        if direcao in ['S', 'W']: decimal *= -1
                         return decimal
-
-                    df['latitude'] = df.apply(lambda row: gms_to_decimal(
-                        row['lat_grau'], row['lat_min'], row['lat_seg'], row['lat_dir']), axis=1)
-                    df['longitude'] = df.apply(lambda row: gms_to_decimal(
-                        row['lon_grau'], row['lon_min'], row['lon_seg'], row['lon_dir']), axis=1)
-                    st.dataframe(df[['latitude', 'longitude']])
-                    st.map(df[['latitude', 'longitude']].dropna())
+                    df['latitude'] = df.apply(lambda r: gms_to_decimal(r['lat_grau'], r['lat_min'], r['lat_seg'], r['lat_dir']), axis=1)
+                    df['longitude'] = df.apply(lambda r: gms_to_decimal(r['lon_grau'], r['lon_min'], r['lon_seg'], r['lon_dir']), axis=1)
+                    st.dataframe(df[['latitude','longitude']])
+                    st.map(df[['latitude','longitude']].dropna())
                     csv = df.to_csv(index=False).encode("utf-8")
                     st.download_button("📥 Baixar arquivo convertido", csv, "convertido.csv", "text/csv")
 
@@ -115,7 +247,6 @@ else:
 
     elif opcao == "🧭 GMS → Geográficas":
         st.markdown("### ✏️ Entrada Manual de Coordenadas em Graus, Minutos e Segundos")
-
         g_lat_deg = st.number_input("Latitude - Graus", value=0)
         g_lat_min = st.number_input("Latitude - Minutos", value=0)
         g_lat_sec = st.number_input("Latitude - Segundos", value=0.0)
@@ -128,12 +259,10 @@ else:
 
         if st.button("Converter para Decimal"):
             latitude = g_lat_deg + g_lat_min / 60 + g_lat_sec / 3600
-            if g_lat_dir == "S":
-                latitude *= -1
+            if g_lat_dir == "S": latitude *= -1
 
             longitude = g_lon_deg + g_lon_min / 60 + g_lon_sec / 3600
-            if g_lon_dir == "W":
-                longitude *= -1
+            if g_lon_dir == "W": longitude *= -1
 
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
