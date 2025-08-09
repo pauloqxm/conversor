@@ -21,11 +21,10 @@ st.markdown(f"""
         font-family: Tahoma, sans-serif;
         border-bottom: 3px solid #fad905;
         z-index: 100000;
-        overflow: visible;              /* permite o submenu “sair” */
+        overflow: visible;
         pointer-events: auto;
     }}
 
-    /* Garante que o conteúdo não cubra o header */
     section.main > div.block-container {{
         position: relative;
         z-index: 1;
@@ -34,20 +33,24 @@ st.markdown(f"""
 
     .header-top {{
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
-        gap: 16px;
+        gap: 8px;
         font-weight: bold;
     }}
 
-    .header-title {{ font-size: 14px; }}
+    .header-title {{ 
+        font-size: 14px;
+        text-align: center;
+    }}
 
+    /* Menu centralizado */
     .nav {{
         display: flex;
+        justify-content: center;
         align-items: center;
         gap: 24px;
-        margin-top: 6px;
-        position: relative;             /* contexto de empilhamento */
+        position: relative;
         z-index: 100000;
     }}
 
@@ -78,17 +81,15 @@ st.markdown(f"""
         border-radius: 6px;
         padding: 6px 0;
         margin-top: 6px;
-        z-index: 100001;                /* acima do header */
+        z-index: 100001;
         pointer-events: auto;
         white-space: nowrap;
     }}
 
-    /* 1) Abre no HOVER (desktop) */
+    /* Hover e clique */
     .dropdown:hover > .dropdown-content {{
         display: block;
     }}
-
-    /* 2) Também abre no CLIQUE (mobile/sem hover) */
     .dropdown.open > .dropdown-content {{
         display: block;
     }}
@@ -124,7 +125,6 @@ st.markdown(f"""
     </div>
 
     <script>
-    // Suporte a clique (útil no mobile ou se hover falhar)
     window.addEventListener('DOMContentLoaded', function() {{
         const toggles = document.querySelectorAll('.dropdown-toggle');
         toggles.forEach(function(tg) {{
@@ -147,9 +147,8 @@ st.markdown(f"""
     </script>
 """, unsafe_allow_html=True)
 
-
-
 # ---------------------- TÍTULO ----------------------
+
 st.markdown(
     "<h1 style='text-align: center;'>📍 Conversor de Coordenadas</h1>"
     "<p style='text-align: center; color: gray;'>Transforme dados entre latitude/longitude, UTM e GMS</p>",
@@ -284,6 +283,7 @@ else:
             st.success("Coordenadas Decimais:")
             st.write(f"🌍 Latitude: **{round(latitude, 6)}**  |  Longitude: **{round(longitude, 6)}**")
             st.map(pd.DataFrame({'latitude': [latitude], 'longitude': [longitude]}))
+
 
 
 
